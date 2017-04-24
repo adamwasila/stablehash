@@ -22,13 +22,6 @@ class HashKey implements Comparable<HashKey> {
         this.hashKey = hashKey;
     }
 
-//    func hashVal(bKey []byte) HashKey {
-//        return ((HashKey(bKey[3]) << 24) |
-//                (HashKey(bKey[2]) << 16) |
-//                (HashKey(bKey[1]) << 8) |
-//                (HashKey(bKey[0])))
-//    }
-
     public static HashKey hashVal(byte[] keyBytes) {
         return new HashKey((Byte.toUnsignedLong(keyBytes[3]) << 24L) |
                 ((Byte.toUnsignedLong(keyBytes[2])) << 16L) |
