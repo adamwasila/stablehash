@@ -25,33 +25,6 @@ public class HashRingTest {
 
     DistributedHash hashRing;
 
-    public void expectNode(String key, String expectedNode) {
-        String node = hashRing.getNode(key).get();
-        Assert.assertEquals(expectedNode, node);
-    }
-
-    public void expectNodes(String key, String... expectedNodes) {
-        String[] nodes = hashRing.getNodes(key, expectedNodes.length).get();
-        Assert.assertArrayEquals(expectedNodes, nodes);
-    }
-
-    public void expectNodesABC() {
-        // Python hash_ring module test case
-        expectNode("test", "a");
-        expectNode("test", "a");
-        expectNode("test1", "b");
-        expectNode("test2", "b");
-        expectNode("test3", "c");
-        expectNode("test4", "c");
-        expectNode("test5", "a");
-        expectNode("aaaa", "b");
-        expectNode("bbbb", "a");
-    }
-
-    public void expectNodesABCD() {
-        expectNodesABC();
-    }
-
     @Test
     public void expectNodeRangesABC() {
         hashRing = DistributedHash.newConsistentHash("a", "b", "c");
@@ -356,6 +329,33 @@ public class HashRingTest {
 
         expectNodesABC();
         expectNodeRangesABC();
+    }
+
+    private void expectNode(String key, String expectedNode) {
+        String node = hashRing.getNode(key).get();
+        Assert.assertEquals(expectedNode, node);
+    }
+
+    private void expectNodes(String key, String... expectedNodes) {
+        String[] nodes = hashRing.getNodes(key, expectedNodes.length).get();
+        Assert.assertArrayEquals(expectedNodes, nodes);
+    }
+
+    private void expectNodesABC() {
+        // Python hash_ring module test case
+        expectNode("test", "a");
+        expectNode("test", "a");
+        expectNode("test1", "b");
+        expectNode("test2", "b");
+        expectNode("test3", "c");
+        expectNode("test4", "c");
+        expectNode("test5", "a");
+        expectNode("aaaa", "b");
+        expectNode("bbbb", "a");
+    }
+
+    private void expectNodesABCD() {
+        expectNodesABC();
     }
 
 }
