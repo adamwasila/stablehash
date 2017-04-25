@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public class HashRing {
+public class HashRing implements DistributedHash {
     private Map<HashKey,String> ring = new HashMap<>();
     private List<HashKey> sortedKeys = new ArrayList<>();
     private List<String> nodes = new ArrayList<>();
@@ -72,11 +72,13 @@ public class HashRing {
         return hring;
     }
 
+    @Override
     public Optional<String> getNode(String stringKey) {
         Optional<Integer> nodePosition = getNodePos(stringKey);
         return nodePosition.map((position) -> ring.get(sortedKeys.get(position)));
     }
 
+    @Override
     public Optional<String[]> getNodes(String stringKey, int size) {
         Optional<Integer> pos = getNodePos(stringKey);
         if (!pos.isPresent()) {
@@ -108,10 +110,12 @@ public class HashRing {
         }
     }
 
+    @Override
     public HashRing addNode(String nodeName) {
         return addWeightedNode(nodeName, 1);
     }
 
+    @Override
     public HashRing addWeightedNode(String nodeName, int weight) {
         if (weight <= 0) {
             return this;
@@ -131,6 +135,7 @@ public class HashRing {
         return newhash;
     }
 
+    @Override
     public HashRing updateWeightedNode(String nodeName, int weight) {
         if (weight <= 0) {
             return this;
@@ -148,6 +153,7 @@ public class HashRing {
         return newhash;
     }
 
+    @Override
     public HashRing removeNode(String nodeName) {
         List<String> newNodes = new ArrayList<>(nodes);
         newNodes.remove(nodeName);
