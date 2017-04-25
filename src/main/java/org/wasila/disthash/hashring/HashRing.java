@@ -299,12 +299,10 @@ public class HashRing implements DistributedHash {
         HashKey key = genKey(stringKey);
 
         int pos = Collections.binarySearch(sortedKeys, key);
+        pos = (pos>=0) ? pos : -(pos+1);
+        pos = pos % sortedKeys.size();
 
-        if (pos>=0) {
-            return Optional.of(pos);
-        } else {
-            return Optional.of(-(pos+1));
-        }
+        return Optional.of(pos);
     }
 
     private HashKey genKey(String key) {
