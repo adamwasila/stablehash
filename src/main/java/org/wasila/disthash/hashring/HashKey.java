@@ -15,13 +15,27 @@
  */
 package org.wasila.disthash.hashring;
 
+/**
+ * The {@code HashKey} class holds hash value of given key. As md5 algorithm is used to generate key
+ * only four bytes are taken into account to calculate the hash value.
+ *
+ * This class is used only internally meaning it is not part of the API.
+ */
 class HashKey implements Comparable<HashKey> {
+
     final long hashKey;
 
-    public HashKey(long hashKey) {
+    private HashKey(long hashKey) {
         this.hashKey = hashKey;
     }
 
+    /**
+     * Create new HashKey instance using first four bytes of given byte array.
+     *
+     * @param keyBytes                        array of bytes; minimum size is 4
+     * @return                                HashKey instance
+     * @throws ArrayIndexOutOfBoundsException If provided array has less than 4 elements
+     */
     public static HashKey hashVal(byte[] keyBytes) {
         return new HashKey((Byte.toUnsignedLong(keyBytes[3]) << 24L) |
                 ((Byte.toUnsignedLong(keyBytes[2])) << 16L) |
@@ -51,8 +65,6 @@ class HashKey implements Comparable<HashKey> {
 
     @Override
     public String toString() {
-        return "HashKey{" +
-                hashKey +
-                '}';
+        return "HashKey{" + hashKey + '}';
     }
 }

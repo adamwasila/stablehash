@@ -27,6 +27,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * The {@code HashRing} class implements consistent hashing algorithm.
+ *
+ * Implementation is based and compatible with serialx/hashring project: {@url https://github.com/serialx/hashring}
+ *
+ */
 public class HashRing implements DistributedHash {
     private final Map<HashKey,String> ring;
     private final List<HashKey> sortedKeys;
@@ -40,12 +46,22 @@ public class HashRing implements DistributedHash {
         weights = new HashMap<>();
     }
 
+    /**
+     * Constructs instance with given nodes list. All nodes have default weight of 1.
+     *
+     * @param nodes List of nodes
+     */
     public HashRing(String... nodes) {
         this();
         this.nodes.addAll(Arrays.asList(nodes));
         generateCircle();
     }
 
+    /**
+     * Constructs instance with given nodes list. All nodes can have arbitrary weight assigned to it.
+     *
+     * @param weights map where nodes are assigned to keys and weights to the corresponding values.
+     */
     public HashRing(Map<String,Integer> weights) {
         this();
         this.nodes.addAll(weights.keySet());
@@ -60,6 +76,14 @@ public class HashRing implements DistributedHash {
         generateCircle();
     }
 
+    /**
+     * Returns new instance of {@code HashRing} with weights updated to the new values.
+     *
+     * @param newWeights Weights of nodes to be updated. All missing values means that weight
+     *                   should be copied to the new instance unchanged.
+     * @return           New {@code HashRing} instance
+     */
+    @Deprecated
     public HashRing updateWeights(Map<String,Integer> newWeights) {
         HashRing hring = this;
         boolean nodesChgFlg;
@@ -82,12 +106,25 @@ public class HashRing implements DistributedHash {
         return hring;
     }
 
+    /**
+     * Returns node for given key.
+     *
+     * @param stringKey Any string value
+     * @return          Node assigned to the key given as an argument
+     */
     @Override
     public Optional<String> getNode(String stringKey) {
         Optional<Integer> nodePosition = getNodePos(stringKey);
         return nodePosition.map((position) -> ring.get(sortedKeys.get(position)));
     }
 
+    /**
+     * Returns array of nodes for given key.
+     *
+     * @param stringKey Any string value
+     * @param size      Specifies how many nodes are expected to be returned
+     * @return          Nodes assigned to the key given as an argument
+     */
     @Override
     public Optional<String[]> getNodes(String stringKey, int size) {
         Optional<Integer> pos = getNodePos(stringKey);
@@ -120,11 +157,25 @@ public class HashRing implements DistributedHash {
         }
     }
 
+    /**
+     * Returns new instance of {@code HashRing} updated with new node. Node has weight 1 assigned
+     * by default so it is equivalent to call addWeightedNode(nodeName, 1) directly
+     *
+     * @param nodeName   Name of node to be added
+     * @return           New {@code HashRing} instance
+     */
     @Override
     public HashRing addNode(String nodeName) {
         return addWeightedNode(nodeName, 1);
     }
 
+    /**
+     * Returns new instance of {@code HashRing} updated with new node of given weight.
+     *
+     * @param nodeName   Name of node to be added
+     * @param weight     Weight of node
+     * @return           New {@code HashRing} instance
+     */
     @Override
     public HashRing addWeightedNode(String nodeName, int weight) {
         if (weight <= 0) {
@@ -145,6 +196,13 @@ public class HashRing implements DistributedHash {
         return newhash;
     }
 
+    /**
+     * Returns new instance of {@code HashRing} updated with node and new weight of that node.
+     *
+     * @param nodeName   Name of node
+     * @param weight     Weight of node
+     * @return           New {@code HashRing} instance
+     */
     @Override
     public HashRing updateWeightedNode(String nodeName, int weight) {
         if (weight <= 0) {
@@ -163,6 +221,12 @@ public class HashRing implements DistributedHash {
         return newhash;
     }
 
+    /**
+     * Returns new instance of {@code HashRing} with given node removed.
+     *
+     * @param nodeName  Name of node
+     * @return          New {@code HashRing} instance
+     */
     @Override
     public HashRing removeNode(String nodeName) {
         List<String> newNodes = new ArrayList<>(nodes);
