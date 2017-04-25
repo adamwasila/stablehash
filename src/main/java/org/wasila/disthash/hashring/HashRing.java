@@ -28,25 +28,35 @@ import java.util.Optional;
 import java.util.Set;
 
 public class HashRing implements DistributedHash {
-    private Map<HashKey,String> ring = new HashMap<>();
-    private List<HashKey> sortedKeys = new ArrayList<>();
-    private List<String> nodes = new ArrayList<>();
-    private Map<String,Integer> weights = new HashMap<>();
+    private final Map<HashKey,String> ring;
+    private final List<HashKey> sortedKeys;
+    private final List<String> nodes;
+    private final Map<String,Integer> weights;
+
+    private HashRing() {
+        ring = new HashMap<>();
+        sortedKeys = new ArrayList<>();
+        nodes = new ArrayList<>();
+        weights = new HashMap<>();
+    }
 
     public HashRing(String... nodes) {
+        this();
         this.nodes.addAll(Arrays.asList(nodes));
         generateCircle();
     }
 
     public HashRing(Map<String,Integer> weights) {
-        this.nodes = new ArrayList<>(weights.keySet());
-        this.weights = weights;
+        this();
+        this.nodes.addAll(weights.keySet());
+        this.weights.putAll(weights);
         generateCircle();
     }
 
     private HashRing(List<String> nodes, Map<String,Integer> weights) {
-        this.nodes = nodes;
-        this.weights = weights;
+        this();
+        this.nodes.addAll(nodes);
+        this.weights.putAll(weights);
         generateCircle();
     }
 
