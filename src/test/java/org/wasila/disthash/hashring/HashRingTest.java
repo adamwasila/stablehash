@@ -16,7 +16,6 @@
 package org.wasila.disthash.hashring;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -24,12 +23,7 @@ import java.util.Map;
 
 public class HashRingTest {
 
-    HashRing hashRing;
-
-    @Before
-    public void init() {
-        hashRing = new HashRing("a", "b", "c");
-    }
+    DistributedHash hashRing;
 
     public void expectNode(String key, String expectedNode) {
         String node = hashRing.getNode(key).get();
@@ -41,7 +35,6 @@ public class HashRingTest {
         Assert.assertArrayEquals(expectedNodes, nodes);
     }
 
-    @Test
     public void expectNodesABC() {
         // Python hash_ring module test case
         expectNode("test", "a");
@@ -59,8 +52,10 @@ public class HashRingTest {
         expectNodesABC();
     }
 
-        @Test
+    @Test
     public void expectNodeRangesABC() {
+        hashRing = DistributedHash.newConsistentHash("a", "b", "c");
+
         expectNodes("test", new String[] {"a", "b"});
         expectNodes("test", new String[] {"a", "b"});
         expectNodes("test1", new String[] {"b", "c"});
@@ -74,6 +69,7 @@ public class HashRingTest {
 
     @Test
     public void expectNodeRangesABCD() {
+        hashRing = DistributedHash.newConsistentHash("a", "b", "c");
         hashRing = hashRing.addNode("d");
 
         expectNode("test", "a");
@@ -117,7 +113,7 @@ public class HashRingTest {
 
     @Test
     public void testDuplicateNodes() {
-        hashRing = new HashRing("a", "a", "a", "a", "b");
+        hashRing = DistributedHash.newConsistentHash("a", "a", "a", "a", "b");
 
         expectNode("test", "a");
         expectNode("test", "a");
@@ -132,7 +128,7 @@ public class HashRingTest {
 
     @Test
     public void testAddWeightedNode() {
-        hashRing = new HashRing("a", "c");
+        hashRing = DistributedHash.newConsistentHash("a", "c");
         hashRing = hashRing.addWeightedNode("b", 0);
         hashRing = hashRing.addWeightedNode("b", 2);
         hashRing = hashRing.addWeightedNode("b", 2);
@@ -152,7 +148,7 @@ public class HashRingTest {
 
     @Test
     public void TestUpdateWeightedNode() {
-        hashRing = new HashRing("a", "c");
+        hashRing = DistributedHash.newConsistentHash("a", "c");
         hashRing = hashRing.addWeightedNode("b", 1);
         hashRing = hashRing.updateWeightedNode("b", 2);
         hashRing = hashRing.updateWeightedNode("b", 2);
@@ -174,7 +170,7 @@ public class HashRingTest {
 
     @Test
     public void TestRemoveAddNode() {
-        hashRing = new HashRing("a", "b", "c");
+        hashRing = DistributedHash.newConsistentHash("a", "b", "c");
 
         expectNodesABC();
         expectNodeRangesABC();
@@ -214,7 +210,7 @@ public class HashRingTest {
         weights.put("b", 2);
         weights.put("c", 1);
 
-        hashRing = new HashRing(weights);
+        hashRing = DistributedHash.newConsistentHash(weights);
 
         expectNode("test", "b");
         expectNode("test", "b");
@@ -261,13 +257,12 @@ public class HashRingTest {
 
     @Test
     public void TestAddRemoveNode() {
-        hashRing = new HashRing("a", "b", "c");
+        hashRing = DistributedHash.newConsistentHash("a", "b", "c");
         hashRing = hashRing.addNode("d");
 
         // Somehow adding d does not load balance these keys...
         expectNodesABCD();
 
-        expectNodes("test", "a", "b");
         expectNodes("test", "a", "b");
         expectNodes("test1", "b", "d");
         expectNodes("test2", "b", "d");
