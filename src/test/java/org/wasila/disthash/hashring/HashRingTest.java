@@ -102,7 +102,8 @@ public class HashRingTest {
     @Test
     public void testAddWeightedNode() {
         hashRing = DistributedHash.newConsistentHash("a", "c");
-        hashRing = hashRing.addWeightedNode("b", 0);
+        // illegal now
+        // hashRing = hashRing.addWeightedNode("b", 0);
         hashRing = hashRing.addWeightedNode("b", 2);
         hashRing = hashRing.addWeightedNode("b", 2);
 
@@ -125,7 +126,8 @@ public class HashRingTest {
         hashRing = hashRing.addWeightedNode("b", 1);
         hashRing = hashRing.updateWeightedNode("b", 2);
         hashRing = hashRing.updateWeightedNode("b", 2);
-        hashRing = hashRing.updateWeightedNode("b", 0);
+        // illegal now
+        // hashRing = hashRing.updateWeightedNode("b", 0);
         hashRing = hashRing.updateWeightedNode("d", 2);
 
         expectNode("test", "b");

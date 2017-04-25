@@ -111,6 +111,7 @@ public class HashRing implements DistributedHash {
      *
      * @param stringKey Any string value
      * @return          Node assigned to the key given as an argument
+     * @throws NullPointerException     if key value is null
      */
     @Override
     public Optional<String> getNode(String stringKey) {
@@ -124,15 +125,20 @@ public class HashRing implements DistributedHash {
      * @param stringKey Any string value
      * @param size      Specifies how many nodes are expected to be returned
      * @return          Nodes assigned to the key given as an argument
+     * @throws NullPointerException     if key value is null
+     * @throws IllegalArgumentException if size is 0 or less or greater than total number of nodes
      */
     @Override
     public Optional<String[]> getNodes(String stringKey, int size) {
-        Optional<Integer> pos = getNodePos(stringKey);
-        if (!pos.isPresent()) {
-            return Optional.empty();
+        if (stringKey == null) {
+            throw new NullPointerException("nodeName must not be null");
+        }
+        if (size < 1 || size > nodes.size()) {
+            throw new IllegalArgumentException("size outside of expected range (0," + nodes.size() +"): " + size);
         }
 
-        if (size > nodes.size()) {
+        Optional<Integer> pos = getNodePos(stringKey);
+        if (!pos.isPresent()) {
             return Optional.empty();
         }
 
@@ -163,6 +169,7 @@ public class HashRing implements DistributedHash {
      *
      * @param nodeName   Name of node to be added
      * @return           New {@code HashRing} instance
+     * @throws NullPointerException     if {@code nodeName} is null
      */
     @Override
     public HashRing addNode(String nodeName) {
@@ -175,11 +182,16 @@ public class HashRing implements DistributedHash {
      * @param nodeName   Name of node to be added
      * @param weight     Weight of node
      * @return           New {@code HashRing} instance
+     * @throws NullPointerException     if {@code nodeName} is null
+     * @throws IllegalArgumentException if weight is 0 or less
      */
     @Override
     public HashRing addWeightedNode(String nodeName, int weight) {
+        if (nodeName == null) {
+            throw new NullPointerException("nodeName must not be null");
+        }
         if (weight <= 0) {
-            return this;
+            throw new IllegalArgumentException("Invalid weight value: " + weight);
         }
 
         if (nodes.contains(nodeName)) {
@@ -202,11 +214,16 @@ public class HashRing implements DistributedHash {
      * @param nodeName   Name of node
      * @param weight     Weight of node
      * @return           New {@code HashRing} instance
+     * @throws NullPointerException     if {@code nodeName} is null
+     * @throws IllegalArgumentException if weight is 0 or less
      */
     @Override
     public HashRing updateWeightedNode(String nodeName, int weight) {
+        if (nodeName == null) {
+            throw new NullPointerException("nodeName must not be null");
+        }
         if (weight <= 0) {
-            return this;
+            throw new IllegalArgumentException("Invalid weight value: " + weight);
         }
 
         if (weights.get(nodeName) != null && weights.get(nodeName) == weight) {
@@ -226,9 +243,14 @@ public class HashRing implements DistributedHash {
      *
      * @param nodeName  Name of node
      * @return          New {@code HashRing} instance
+     * @throws NullPointerException     if {@code nodeName} is null
      */
     @Override
     public HashRing removeNode(String nodeName) {
+        if (nodeName == null) {
+            throw new NullPointerException("nodeName must not be null");
+        }
+
         List<String> newNodes = new ArrayList<>(nodes);
         newNodes.remove(nodeName);
 
@@ -267,6 +289,9 @@ public class HashRing implements DistributedHash {
     }
 
     private Optional<Integer> getNodePos(String stringKey) {
+        if (stringKey == null) {
+            throw new NullPointerException("specified key must not be null");
+        }
         if (ring.isEmpty()) {
             return Optional.empty();
         }
