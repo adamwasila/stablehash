@@ -44,7 +44,7 @@ public class HashRing {
         generateCircle();
     }
 
-    public HashRing(List<String> nodes, Map<String,Integer> weights) {
+    private HashRing(List<String> nodes, Map<String,Integer> weights) {
         this.nodes = nodes;
         this.weights = weights;
         generateCircle();
@@ -73,52 +73,9 @@ public class HashRing {
         }
     }
 
-    public void generateCircle() {
-        int totalWeight = nodes.stream().mapToInt(value -> weights.getOrDefault(value, 1)).sum();
-
-        int totalNodes = nodes.size();
-
-        for (String node : nodes) {
-            int weight = weights.getOrDefault(node, 1);
-            int factor = (int)(Math.floor((40.0d * totalNodes * weight) / totalWeight));
-
-            for (int j=0; j<factor; j++) {
-                String nodeKey = node + "-" + j;
-                byte[] bKey = hashDigest(nodeKey);
-                for (int i=0; i<3; i++) {
-                    HashKey key = HashKey.hashVal(Arrays.copyOfRange(bKey, i*4, i*4+4));
-                    ring.put(key, node);
-                    sortedKeys.add(key);
-                }
-            }
-        }
-        Collections.sort(sortedKeys);
-    }
-
     public Optional<String> getNode(String stringKey) {
         Optional<Integer> nodePosition = getNodePos(stringKey);
         return nodePosition.map((position) -> ring.get(sortedKeys.get(position)));
-    }
-
-    public Optional<Integer> getNodePos(String stringKey) {
-        if (ring.isEmpty()) {
-            return Optional.empty();
-        }
-
-        HashKey key = genKey(stringKey);
-
-        int pos = Collections.binarySearch(sortedKeys, key);
-
-        if (pos>=0) {
-            return Optional.of(pos);
-        } else {
-            return Optional.of(-(pos+1));
-        }
-    }
-
-    public HashKey genKey(String key) {
-        byte[] bKey = hashDigest(key);
-        return HashKey.hashVal(bKey);
     }
 
     public Optional<String[]> getNodes(String stringKey, int size) {
@@ -206,6 +163,49 @@ public class HashRing {
         HashRing newHashRing = new HashRing(newNodes, newWeights);
 
         return newHashRing;
+    }
+
+    private void generateCircle() {
+        int totalWeight = nodes.stream().mapToInt(value -> weights.getOrDefault(value, 1)).sum();
+
+        int totalNodes = nodes.size();
+
+        for (String node : nodes) {
+            int weight = weights.getOrDefault(node, 1);
+            int factor = (int)(Math.floor((40.0d * totalNodes * weight) / totalWeight));
+
+            for (int j=0; j<factor; j++) {
+                String nodeKey = node + "-" + j;
+                byte[] bKey = hashDigest(nodeKey);
+                for (int i=0; i<3; i++) {
+                    HashKey key = HashKey.hashVal(Arrays.copyOfRange(bKey, i*4, i*4+4));
+                    ring.put(key, node);
+                    sortedKeys.add(key);
+                }
+            }
+        }
+        Collections.sort(sortedKeys);
+    }
+
+    private Optional<Integer> getNodePos(String stringKey) {
+        if (ring.isEmpty()) {
+            return Optional.empty();
+        }
+
+        HashKey key = genKey(stringKey);
+
+        int pos = Collections.binarySearch(sortedKeys, key);
+
+        if (pos>=0) {
+            return Optional.of(pos);
+        } else {
+            return Optional.of(-(pos+1));
+        }
+    }
+
+    private HashKey genKey(String key) {
+        byte[] bKey = hashDigest(key);
+        return HashKey.hashVal(bKey);
     }
 
     private byte[] hashDigest(String key) {
