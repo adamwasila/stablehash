@@ -50,8 +50,9 @@ public class HashRing {
         generateCircle();
     }
 
-    public void updateWeights(Map<String,Integer> newWeights) throws NoSuchAlgorithmException {
-        boolean nodesChgFlg = false;
+    public HashRing updateWeights(Map<String,Integer> newWeights) {
+        HashRing hring = this;
+        boolean nodesChgFlg;
 
         if (newWeights.size() != weights.size()) {
             nodesChgFlg = true;
@@ -65,12 +66,10 @@ public class HashRing {
         }
 
         if (nodesChgFlg) {
-            HashRing hring = new HashRing(newWeights);
-            this.weights = hring.weights;
-            this.nodes = hring.nodes;
-            this.ring = hring.ring;
-            this.sortedKeys = hring.sortedKeys;
+            hring = new HashRing(newWeights);
         }
+
+        return hring;
     }
 
     public Optional<String> getNode(String stringKey) {
