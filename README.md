@@ -1,4 +1,6 @@
-# hashring
+# hashring 
+[![Build Status](https://travis-ci.org/adamwasila/hashring.svg?branch=master)](https://travis-ci.org/adamwasila/hashring)
+[![GitHub version](https://badge.fury.io/gh/adamwasila%2Fhashring.svg)](https://badge.fury.io/gh/adamwasila%2Fhashring)
 
 Consistent hashing implementation in java
 
