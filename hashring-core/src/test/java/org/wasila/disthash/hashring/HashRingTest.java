@@ -21,6 +21,11 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Tests inherited from original project written in go.
+ * Used for conformance check - in case of nonconformant behaviour (eg. stricter validation rules)
+ * failing test cases will be commented out, left for further inspection.
+ */
 public class HashRingTest {
 
     DistributedHash hashRing;
