@@ -24,13 +24,13 @@ public interface DistributedHash {
 
     Optional<String[]> getNodes(String stringKey, int size);
 
-    HashRing addNode(String nodeName);
+    DistributedHash addNode(String nodeName);
 
-    HashRing addWeightedNode(String nodeName, int weight);
+    DistributedHash addWeightedNode(String nodeName, int weight);
 
-    HashRing updateWeightedNode(String nodeName, int weight);
+    DistributedHash updateWeightedNode(String nodeName, int weight);
 
-    HashRing removeNode(String nodeName);
+    DistributedHash removeNode(String nodeName);
 
     static DistributedHash newConsistentHash(String... nodes) {
         return new HashRing(nodes);
