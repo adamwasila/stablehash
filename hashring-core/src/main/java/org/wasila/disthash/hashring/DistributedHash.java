@@ -17,12 +17,13 @@ package org.wasila.disthash.hashring;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public interface DistributedHash {
 
     Optional<String> getNode(String stringKey);
 
-    Optional<String[]> getNodes(String stringKey, int size);
+    Set<String> getNodes(String stringKey, int size);
 
     DistributedHash addNode(String nodeName);
 

@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -129,7 +130,7 @@ public class HashRing implements DistributedHash {
      * @throws IllegalArgumentException if size is 0 or less or greater than total number of nodes
      */
     @Override
-    public Optional<String[]> getNodes(String stringKey, int size) {
+    public Set<String> getNodes(String stringKey, int size) {
         if (stringKey == null) {
             throw new NullPointerException("nodeName must not be null");
         }
@@ -139,11 +140,11 @@ public class HashRing implements DistributedHash {
 
         Optional<Integer> pos = getNodePos(stringKey);
         if (!pos.isPresent()) {
-            return Optional.empty();
+            return Collections.emptySet();
         }
 
         Set<String> returnedValues = new HashSet<>();
-        List<String> resultSlice = new ArrayList<>();
+        Set<String> resultSlice = new LinkedHashSet<>();
         for (int i = pos.get(); i < pos.get() + sortedKeys.size(); i++) {
             HashKey key = sortedKeys.get(i % sortedKeys.size());
             String val = ring.get(key);
@@ -156,10 +157,11 @@ public class HashRing implements DistributedHash {
                 break;
             }
         }
+
         if (resultSlice.size() == size) {
-            return Optional.of(resultSlice.toArray(new String[0]));
+            return resultSlice;
         } else {
-            return Optional.empty();
+            return Collections.emptySet();
         }
     }
 

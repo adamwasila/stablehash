@@ -344,7 +344,7 @@ public class HashRingTest {
     }
 
     private void expectNodes(String key, String... expectedNodes) {
-        String[] nodes = hashRing.getNodes(key, expectedNodes.length).get();
+        String[] nodes = hashRing.getNodes(key, expectedNodes.length).toArray(new String[0]);
         Assert.assertArrayEquals(expectedNodes, nodes);
     }
 
