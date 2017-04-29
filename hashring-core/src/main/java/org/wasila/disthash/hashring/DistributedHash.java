@@ -15,6 +15,7 @@
  */
 package org.wasila.disthash.hashring;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -33,7 +34,7 @@ public interface DistributedHash {
 
     DistributedHash removeNode(String nodeName);
 
-    static DistributedHash newConsistentHash(String... nodes) {
+    static DistributedHash newConsistentHash(Collection<String> nodes) {
         return new HashRing(nodes);
     }
 

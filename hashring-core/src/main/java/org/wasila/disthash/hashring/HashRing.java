@@ -19,6 +19,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,11 +51,11 @@ public class HashRing implements DistributedHash {
     /**
      * Constructs instance with given nodes list. All nodes have default weight of 1.
      *
-     * @param nodes List of nodes
+     * @param nodes Collection of nodes
      */
-    public HashRing(String... nodes) {
+    public HashRing(Collection<String> nodes) {
         this();
-        this.nodes.addAll(Arrays.asList(nodes));
+        this.nodes.addAll(nodes);
         generateCircle();
     }
 

@@ -18,7 +18,9 @@ package org.wasila.disthash.hashring;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,7 +34,8 @@ public class HashRingTest {
 
     @Test
     public void expectNodeRangesABC() {
-        hashRing = DistributedHash.newConsistentHash("a", "b", "c");
+        List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
+        hashRing = DistributedHash.newConsistentHash(nodes);
 
         expectNodes("test", new String[] {"a", "b"});
         expectNodes("test", new String[] {"a", "b"});
@@ -47,7 +50,8 @@ public class HashRingTest {
 
     @Test
     public void expectNodeRangesABCD() {
-        hashRing = DistributedHash.newConsistentHash("a", "b", "c");
+        List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
+        hashRing = DistributedHash.newConsistentHash(nodes);
         hashRing = hashRing.addNode("d");
 
         expectNode("test", "a");
@@ -91,7 +95,8 @@ public class HashRingTest {
 
     @Test
     public void testDuplicateNodes() {
-        hashRing = DistributedHash.newConsistentHash("a", "a", "a", "a", "b");
+        List<String> nodes = Arrays.asList(new String[] {"a", "a", "a", "a", "b"});
+        hashRing = DistributedHash.newConsistentHash(nodes);
 
         expectNode("test", "a");
         expectNode("test", "a");
@@ -106,7 +111,8 @@ public class HashRingTest {
 
     @Test
     public void testAddWeightedNode() {
-        hashRing = DistributedHash.newConsistentHash("a", "c");
+        List<String> nodes = Arrays.asList(new String[] {"a", "c"});
+        hashRing = DistributedHash.newConsistentHash(nodes);
         // illegal now
         // hashRing = hashRing.addWeightedNode("b", 0);
         hashRing = hashRing.addWeightedNode("b", 2);
@@ -127,7 +133,8 @@ public class HashRingTest {
 
     @Test
     public void TestUpdateWeightedNode() {
-        hashRing = DistributedHash.newConsistentHash("a", "c");
+        List<String> nodes = Arrays.asList(new String[] {"a", "c"});
+        hashRing = DistributedHash.newConsistentHash(nodes);
         hashRing = hashRing.addWeightedNode("b", 1);
         hashRing = hashRing.updateWeightedNode("b", 2);
         hashRing = hashRing.updateWeightedNode("b", 2);
@@ -150,7 +157,8 @@ public class HashRingTest {
 
     @Test
     public void TestRemoveAddNode() {
-        hashRing = DistributedHash.newConsistentHash("a", "b", "c");
+        List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
+        hashRing = DistributedHash.newConsistentHash(nodes);
 
         expectNodesABC();
         expectNodeRangesABC();
@@ -237,7 +245,8 @@ public class HashRingTest {
 
     @Test
     public void TestAddRemoveNode() {
-        hashRing = DistributedHash.newConsistentHash("a", "b", "c");
+        List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
+        hashRing = DistributedHash.newConsistentHash(nodes);
         hashRing = hashRing.addNode("d");
 
         // Somehow adding d does not load balance these keys...
