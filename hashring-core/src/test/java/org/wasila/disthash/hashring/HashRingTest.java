@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class HashRingTest {
 
-    DistributedHash hashRing;
+    DistributedHash<String> hashRing;
 
     @Test
     public void expectNodeRangesABC() {

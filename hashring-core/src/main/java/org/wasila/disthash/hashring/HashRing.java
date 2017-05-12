@@ -35,11 +35,12 @@ import java.util.Set;
  * Implementation is based and compatible with serialx/hashring project: {@url https://github.com/serialx/hashring}
  *
  */
-public class HashRing implements DistributedHash {
-    private final Map<HashKey,String> ring;
+public class HashRing<N> implements DistributedHash<N> {
+
+    private final Map<HashKey,N> ring;
     private final List<HashKey> sortedKeys;
-    private final List<String> nodes;
-    private final Map<String,Integer> weights;
+    private final List<N> nodes;
+    private final Map<N,Integer> weights;
 
     private HashRing() {
         ring = new HashMap<>();
@@ -53,7 +54,7 @@ public class HashRing implements DistributedHash {
      *
      * @param nodes Collection of nodes
      */
-    public HashRing(Collection<String> nodes) {
+    public HashRing(Collection<N> nodes) {
         this();
         this.nodes.addAll(nodes);
         generateCircle();
@@ -64,14 +65,14 @@ public class HashRing implements DistributedHash {
      *
      * @param weights map where nodes are assigned to keys and weights to the corresponding values.
      */
-    public HashRing(Map<String,Integer> weights) {
+    public HashRing(Map<N,Integer> weights) {
         this();
         this.nodes.addAll(weights.keySet());
         this.weights.putAll(weights);
         generateCircle();
     }
 
-    private HashRing(List<String> nodes, Map<String,Integer> weights) {
+    private HashRing(List<N> nodes, Map<N,Integer> weights) {
         this();
         this.nodes.addAll(nodes);
         this.weights.putAll(weights);
@@ -86,7 +87,7 @@ public class HashRing implements DistributedHash {
      * @return           New {@code HashRing} instance
      */
     @Deprecated
-    public HashRing updateWeights(Map<String,Integer> newWeights) {
+    public HashRing updateWeights(Map<N,Integer> newWeights) {
         HashRing hring = this;
         boolean nodesChgFlg;
 
@@ -102,7 +103,7 @@ public class HashRing implements DistributedHash {
         }
 
         if (nodesChgFlg) {
-            hring = new HashRing(newWeights);
+            hring = new HashRing<N>(newWeights);
         }
 
         return hring;
@@ -116,7 +117,7 @@ public class HashRing implements DistributedHash {
      * @throws NullPointerException     if key value is null
      */
     @Override
-    public Optional<String> getNode(String stringKey) {
+    public Optional<N> getNode(String stringKey) {
         Optional<Integer> nodePosition = getNodePos(stringKey);
         return nodePosition.map((position) -> ring.get(sortedKeys.get(position)));
     }
@@ -131,7 +132,7 @@ public class HashRing implements DistributedHash {
      * @throws IllegalArgumentException if size is 0 or less or greater than total number of nodes
      */
     @Override
-    public Set<String> getNodes(String stringKey, int size) {
+    public Set<N> getNodes(String stringKey, int size) {
         if (stringKey == null) {
             throw new NullPointerException("nodeName must not be null");
         }
@@ -144,11 +145,11 @@ public class HashRing implements DistributedHash {
             return Collections.emptySet();
         }
 
-        Set<String> returnedValues = new HashSet<>();
-        Set<String> resultSlice = new LinkedHashSet<>();
+        Set<N> returnedValues = new HashSet<>();
+        Set<N> resultSlice = new LinkedHashSet<>();
         for (int i = pos.get(); i < pos.get() + sortedKeys.size(); i++) {
             HashKey key = sortedKeys.get(i % sortedKeys.size());
-            String val = ring.get(key);
+            N val = ring.get(key);
 
             if (!returnedValues.contains(val)) {
                 returnedValues.add(val);
@@ -175,7 +176,7 @@ public class HashRing implements DistributedHash {
      * @throws NullPointerException     if {@code nodeName} is null
      */
     @Override
-    public HashRing addNode(String nodeName) {
+    public HashRing addNode(N nodeName) {
         return addWeightedNode(nodeName, 1);
     }
 
@@ -189,7 +190,7 @@ public class HashRing implements DistributedHash {
      * @throws IllegalArgumentException if weight is 0 or less
      */
     @Override
-    public HashRing addWeightedNode(String nodeName, int weight) {
+    public HashRing addWeightedNode(N nodeName, int weight) {
         if (nodeName == null) {
             throw new NullPointerException("nodeName must not be null");
         }
@@ -201,8 +202,8 @@ public class HashRing implements DistributedHash {
             return this;
         }
 
-        Map<String,Integer> newWeights = new HashMap<>(this.weights);
-        List<String> newNodes = new ArrayList<>(this.nodes);
+        Map<N,Integer> newWeights = new HashMap<>(this.weights);
+        List<N> newNodes = new ArrayList<>(this.nodes);
 
         newWeights.put(nodeName, weight);
         newNodes.add(nodeName);
@@ -221,7 +222,7 @@ public class HashRing implements DistributedHash {
      * @throws IllegalArgumentException if weight is 0 or less
      */
     @Override
-    public HashRing updateWeightedNode(String nodeName, int weight) {
+    public HashRing updateWeightedNode(N nodeName, int weight) {
         if (nodeName == null) {
             throw new NullPointerException("nodeName must not be null");
         }
@@ -233,7 +234,7 @@ public class HashRing implements DistributedHash {
             return this;
         }
 
-        Map<String,Integer> newWeights = new HashMap<>(this.weights);
+        Map<N,Integer> newWeights = new HashMap<>(this.weights);
 
         newWeights.put(nodeName, weight);
 
@@ -249,19 +250,19 @@ public class HashRing implements DistributedHash {
      * @throws NullPointerException     if {@code nodeName} is null
      */
     @Override
-    public HashRing removeNode(String nodeName) {
+    public HashRing removeNode(N nodeName) {
         if (nodeName == null) {
             throw new NullPointerException("nodeName must not be null");
         }
 
-        List<String> newNodes = new ArrayList<>(nodes);
+        List<N> newNodes = new ArrayList<>(nodes);
         newNodes.remove(nodeName);
 
         if (nodes.size() == newNodes.size()) {
             return this;
         }
 
-        Map<String,Integer> newWeights = new HashMap<>(weights);
+        Map<N,Integer> newWeights = new HashMap<>(weights);
         newWeights.remove(nodeName);
 
         HashRing newHashRing = new HashRing(newNodes, newWeights);
@@ -274,12 +275,12 @@ public class HashRing implements DistributedHash {
 
         int totalNodes = nodes.size();
 
-        for (String node : nodes) {
+        for (N node : nodes) {
             int weight = weights.getOrDefault(node, 1);
             int factor = (int)(Math.floor((40.0d * totalNodes * weight) / totalWeight));
 
             for (int j=0; j<factor; j++) {
-                String nodeKey = node + "-" + j;
+                String nodeKey = node.toString() + "-" + j;
                 byte[] bKey = hashDigest(nodeKey);
                 for (int i=0; i<3; i++) {
                     HashKey key = HashKey.hashVal(Arrays.copyOfRange(bKey, i*4, i*4+4));

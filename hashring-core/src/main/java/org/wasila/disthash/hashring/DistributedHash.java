@@ -20,26 +20,26 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public interface DistributedHash {
+public interface DistributedHash<N> {
 
-    Optional<String> getNode(String stringKey);
+    Optional<N> getNode(String stringKey);
 
-    Set<String> getNodes(String stringKey, int size);
+    Set<N> getNodes(String stringKey, int size);
 
-    DistributedHash addNode(String nodeName);
+    DistributedHash addNode(N nodeName);
 
-    DistributedHash addWeightedNode(String nodeName, int weight);
+    DistributedHash addWeightedNode(N nodeName, int weight);
 
-    DistributedHash updateWeightedNode(String nodeName, int weight);
+    DistributedHash updateWeightedNode(N nodeName, int weight);
 
-    DistributedHash removeNode(String nodeName);
+    DistributedHash removeNode(N nodeName);
 
-    static DistributedHash newConsistentHash(Collection<String> nodes) {
-        return new HashRing(nodes);
+    static <N> DistributedHash newConsistentHash(Collection<N> nodes) {
+        return new HashRing<N>(nodes);
     }
 
-    static DistributedHash newConsistentHash(Map<String,Integer> weightedNodes) {
-        return new HashRing(weightedNodes);
+    static <N> DistributedHash newConsistentHash(Map<N,Integer> weightedNodes) {
+        return new HashRing<N>(weightedNodes);
     }
 
 }
