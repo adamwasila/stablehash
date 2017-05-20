@@ -15,8 +15,6 @@
  */
 package org.wasila.disthash.hashring;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,7 +40,10 @@ public class HashRing<N> implements DistributedHash<N> {
     private final List<N> nodes;
     private final Map<N,Integer> weights;
 
+    private final HashUtil hashUtil;
+
     private HashRing() {
+        hashUtil = new HashUtil();
         ring = new HashMap<>();
         sortedKeys = new ArrayList<>();
         nodes = new ArrayList<>();
@@ -281,7 +282,7 @@ public class HashRing<N> implements DistributedHash<N> {
 
             for (int j=0; j<factor; j++) {
                 String nodeKey = node.toString() + "-" + j;
-                byte[] bKey = hashDigest(nodeKey);
+                byte[] bKey = hashUtil.hashDigest(nodeKey);
                 for (int i=0; i<3; i++) {
                     HashKey key = HashKey.hashVal(Arrays.copyOfRange(bKey, i*4, i*4+4));
                     ring.put(key, node);
@@ -300,27 +301,13 @@ public class HashRing<N> implements DistributedHash<N> {
             return Optional.empty();
         }
 
-        HashKey key = genKey(stringKey);
+        HashKey key = hashUtil.genKey(stringKey);
 
         int pos = Collections.binarySearch(sortedKeys, key);
         pos = (pos>=0) ? pos : -(pos+1);
         pos = pos % sortedKeys.size();
 
         return Optional.of(pos);
-    }
-
-    private HashKey genKey(String key) {
-        byte[] bKey = hashDigest(key);
-        return HashKey.hashVal(bKey);
-    }
-
-    private byte[] hashDigest(String key) {
-        try {
-            MessageDigest md5 = MessageDigest.getInstance("MD5");
-            return md5.digest(key.getBytes());
-        } catch (NoSuchAlgorithmException ex) {
-            throw new RuntimeException(ex);
-        }
     }
 
 }
