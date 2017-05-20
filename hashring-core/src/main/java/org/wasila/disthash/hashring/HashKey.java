@@ -23,6 +23,9 @@ package org.wasila.disthash.hashring;
  */
 class HashKey implements Comparable<HashKey> {
 
+    private final long fto = (0xFFFFFFFFFFFFFFFFL >> (64 - 53));
+    private final double ftz = (double)(1L << 53);
+
     final long hashKey;
 
     private HashKey(long hashKey) {
@@ -43,6 +46,11 @@ class HashKey implements Comparable<HashKey> {
                 (Byte.toUnsignedLong(keyBytes[0])));
     }
 
+
+    public double toDouble() {
+        return (this.hashKey & fto) / ftz;
+    }
+
     @Override
     public int compareTo(HashKey comparedKey) {
         return Long.compare(hashKey, comparedKey.hashKey);
@@ -61,6 +69,10 @@ class HashKey implements Comparable<HashKey> {
     @Override
     public int hashCode() {
         return (int) (hashKey ^ (hashKey >>> 32));
+    }
+
+    public long getHashKey() {
+        return hashKey;
     }
 
     @Override

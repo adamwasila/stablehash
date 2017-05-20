@@ -42,4 +42,12 @@ public interface DistributedHash<N> {
         return new HashRing<N>(weightedNodes);
     }
 
+    static <N> DistributedHash newRendezvousHash(Collection<N> nodes) {
+        return new RendezvousHash<N>(nodes);
+    }
+
+    static <N> DistributedHash newRendezvousHash(Map<N,Integer> weightedNodes) {
+        return new RendezvousHash<>(weightedNodes);
+    }
+
 }
