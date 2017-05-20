@@ -15,6 +15,8 @@
  */
 package org.wasila.disthash.hashring;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,27 +61,27 @@ public class RendezvousHash<N> implements DistributedHash<N> {
 
     @Override
     public Set<N> getNodes(String stringKey, int size) {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public RendezvousHash<N> addNode(N nodeName) {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public RendezvousHash<N> addWeightedNode(N nodeName, int weight) {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public RendezvousHash<N> updateWeightedNode(N nodeName, int weight) {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public RendezvousHash<N> removeNode(N nodeName) {
-        return null;
+        throw new NotImplementedException();
     }
 
     private double getWeightedScore(String keyString, N node, int weight) {
