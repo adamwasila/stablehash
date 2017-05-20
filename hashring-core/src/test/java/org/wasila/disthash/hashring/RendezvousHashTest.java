@@ -42,6 +42,72 @@ public class RendezvousHashTest {
 
     }
 
+    @Test
+    public void testAddNode() {
+        List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
+        hashRing = new RendezvousHash<>(nodes);
+        hashRing = hashRing.addNode("d");
+
+        expectNode("test", "b");
+        expectNode("test1", "d"); // *
+        expectNode("test2", "a");
+        expectNode("test3", "a");
+        expectNode("test4", "c");
+        expectNode("test5", "c");
+        expectNode("aaaa", "d"); // *
+        expectNode("bbbb", "d"); // *
+
+        hashRing = hashRing.removeNode("d");
+
+        expectNode("test", "b");
+        expectNode("test1", "b");
+        expectNode("test2", "a");
+        expectNode("test3", "a");
+        expectNode("test4", "c");
+        expectNode("test5", "c");
+        expectNode("aaaa", "b");
+        expectNode("bbbb", "a");
+
+    }
+
+    @Test
+    public void testRemoveNode() {
+        List<String> nodes = Arrays.asList(new String[] {"a", "b", "c", "d"});
+        hashRing = new RendezvousHash<>(nodes);
+
+        expectNode("test", "b");
+        expectNode("test1", "d");
+        expectNode("test2", "a");
+        expectNode("test3", "a");
+        expectNode("test4", "c");
+        expectNode("test5", "c");
+        expectNode("aaaa", "d");
+        expectNode("bbbb", "d");
+
+        hashRing = hashRing.removeNode("a");
+
+        expectNode("test", "b");
+        expectNode("test1", "d");
+        expectNode("test4", "c");
+        expectNode("test5", "c");
+        expectNode("aaaa", "d");
+        expectNode("bbbb", "d");
+
+        hashRing = hashRing.removeNode("c");
+
+        expectNode("test", "b");
+        expectNode("test1", "d");
+        expectNode("aaaa", "d");
+        expectNode("bbbb", "d");
+
+        hashRing = hashRing.removeNode("b");
+
+        expectNode("test1", "d");
+        expectNode("aaaa", "d");
+        expectNode("bbbb", "d");
+
+    }
+
     private void expectNode(String key, String expectedNode) {
         Optional<String> node = hashRing.getNode(key);
         Assert.assertEquals(expectedNode, node.get());

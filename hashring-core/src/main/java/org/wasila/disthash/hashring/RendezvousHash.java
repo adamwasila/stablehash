@@ -66,22 +66,41 @@ public class RendezvousHash<N> implements DistributedHash<N> {
 
     @Override
     public RendezvousHash<N> addNode(N nodeName) {
-        throw new NotImplementedException();
+        return addWeightedNode(nodeName, 1);
     }
 
     @Override
     public RendezvousHash<N> addWeightedNode(N nodeName, int weight) {
-        throw new NotImplementedException();
+        if (nodeName == null) {
+            throw new NullPointerException("nodeName must not be null");
+        }
+        if (weight <= 0) {
+            throw new IllegalArgumentException("Invalid weight value: " + weight);
+        }
+
+        Integer oldWeight = nodes.get(nodeName);
+        if (oldWeight != null && oldWeight == 1) {
+            return this;
+        }
+        Map<N, Integer> newNodes = new HashMap<>(nodes);
+        newNodes.put(nodeName, 1);
+        return new RendezvousHash<>(newNodes);
     }
 
     @Override
     public RendezvousHash<N> updateWeightedNode(N nodeName, int weight) {
-        throw new NotImplementedException();
+        return addWeightedNode(nodeName, weight);
     }
 
     @Override
     public RendezvousHash<N> removeNode(N nodeName) {
-        throw new NotImplementedException();
+        if (!nodes.containsKey(nodeName)) {
+            return this;
+        }
+        Map<N, Integer> newNodes = new HashMap<>();
+        newNodes.putAll(nodes);
+        newNodes.remove(nodeName);
+        return new RendezvousHash<>(newNodes);
     }
 
     private double getWeightedScore(String keyString, N node, int weight) {
