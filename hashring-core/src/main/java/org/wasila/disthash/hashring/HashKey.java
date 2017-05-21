@@ -71,10 +71,6 @@ class HashKey implements Comparable<HashKey> {
         return (int) (hashKey ^ (hashKey >>> 32));
     }
 
-    public long getHashKey() {
-        return hashKey;
-    }
-
     @Override
     public String toString() {
         return "HashKey{" + hashKey + '}';
