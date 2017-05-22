@@ -24,6 +24,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Weighted Rendezvous hashing implementation base on algorithm presented by Jason Resch.
+ *
+ * For more info and comparison to different methods, please visit:
+ * http://www.snia.org/sites/default/files/SDC15_presentations/dist_sys/Jason_Resch_New_Consistent_Hashings_Rev.pdf
+ *
+ * @param <N> Node type
+ */
 public class RendezvousHash<N> implements DistributedHash<N> {
 
     private HashUtil hashUtil;
