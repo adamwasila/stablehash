@@ -15,10 +15,11 @@
  */
 package org.wasila.disthash.hashring;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -69,7 +70,17 @@ public class RendezvousHash<N> implements DistributedHash<N> {
 
     @Override
     public Set<N> getNodes(String stringKey, int size) {
-        throw new NotImplementedException();
+        List<Pair<N,Double>> scoredNodes = new ArrayList<>();
+
+        for (Map.Entry<N, Integer> entry : nodes.entrySet()) {
+            scoredNodes.add(new Pair<>(entry.getKey(), -1 * getWeightedScore(stringKey, entry.getKey(), entry.getValue())));
+        }
+
+        scoredNodes.sort(Comparator.comparingDouble(Pair::getLast));
+
+        Set<N> resultSet = scoredNodes.subList(0, size).stream().map(pair -> pair.getFirst()).collect(Collectors.toSet());
+
+        return resultSet;
     }
 
     @Override

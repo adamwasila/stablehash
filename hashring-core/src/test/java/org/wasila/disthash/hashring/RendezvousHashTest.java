@@ -108,9 +108,29 @@ public class RendezvousHashTest {
 
     }
 
+    @Test
+    public void expectNodeRangesABC() {
+        List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
+        hashRing = DistributedHash.newRendezvousHash(nodes);
+
+        expectNodes("test", new String[] {"b", "c"});
+        expectNodes("test1", new String[] {"b", "c"});
+        expectNodes("test2", new String[] {"a", "b"});
+        expectNodes("test3", new String[] {"a", "c"});
+        expectNodes("test4", new String[] {"a", "c"});
+        expectNodes("test5", new String[] {"a", "c"});
+        expectNodes("aaaa", new String[] {"a", "b"});
+        expectNodes("bbbb", new String[] {"a", "c"});
+    }
+
     private void expectNode(String key, String expectedNode) {
         Optional<String> node = hashRing.getNode(key);
         Assert.assertEquals(expectedNode, node.get());
+    }
+
+    private void expectNodes(String key, String... expectedNodes) {
+        String[] nodes = hashRing.getNodes(key, expectedNodes.length).toArray(new String[0]);
+        Assert.assertArrayEquals(expectedNodes, nodes);
     }
 
 }
