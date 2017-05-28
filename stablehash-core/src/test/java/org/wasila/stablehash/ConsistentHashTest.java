@@ -15,7 +15,6 @@
  */
 package org.wasila.stablehash;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -28,9 +27,7 @@ import java.util.Map;
  * Used for conformance check - in case of nonconformant behaviour (eg. stricter validation rules)
  * failing test cases will be commented out, left for further inspection.
  */
-public class ConsistentHashTest {
-
-    StableHash<String> hash;
+public class ConsistentHashTest extends TestBase {
 
     @Test
     public void expectNodeRangesABC() {
@@ -345,16 +342,6 @@ public class ConsistentHashTest {
 
         expectNodesABC();
         expectNodeRangesABC();
-    }
-
-    private void expectNode(String key, String expectedNode) {
-        String node = hash.getNode(key).get();
-        Assert.assertEquals(expectedNode, node);
-    }
-
-    private void expectNodes(String key, String... expectedNodes) {
-        String[] nodes = hash.getNodes(key, expectedNodes.length).toArray(new String[0]);
-        Assert.assertArrayEquals(expectedNodes, nodes);
     }
 
     private void expectNodesABC() {

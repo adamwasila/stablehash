@@ -15,17 +15,13 @@
  */
 package org.wasila.stablehash;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.wasila.stablehash.internal.RendezvousHash;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-public class RendezvousHashTest {
-
-    StableHash<String> hash;
+public class RendezvousHashTest extends TestBase {
 
     @Test
     public void testSingleNodeABC() {
@@ -122,16 +118,6 @@ public class RendezvousHashTest {
         expectNodes("test5", new String[] {"a", "c"});
         expectNodes("aaaa", new String[] {"a", "b"});
         expectNodes("bbbb", new String[] {"a", "c"});
-    }
-
-    private void expectNode(String key, String expectedNode) {
-        Optional<String> node = hash.getNode(key);
-        Assert.assertEquals(expectedNode, node.get());
-    }
-
-    private void expectNodes(String key, String... expectedNodes) {
-        String[] nodes = hash.getNodes(key, expectedNodes.length).toArray(new String[0]);
-        Assert.assertArrayEquals(expectedNodes, nodes);
     }
 
 }
