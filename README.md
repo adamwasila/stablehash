@@ -1,20 +1,22 @@
-# hashring 
+# stablehash
 [![Build Status](https://travis-ci.org/adamwasila/hashring.svg?branch=master)](https://travis-ci.org/adamwasila/hashring)
 [![GitHub version](https://badge.fury.io/gh/adamwasila%2Fhashring.svg)](https://badge.fury.io/gh/adamwasila%2Fhashring)
 
-Consistent hashing implementation in java
+Stable hashing implementation in java. Clean and simple (no runtime dependencies!).
 
-Implements consistent hashing that can be used when the number of server nodes can increase or decrease (like in memcached). The hashing ring is built using the same algorithm as libketama.
+Currently it supports two independent algorithms for hashing:
 
-This is almost direct translation of golang hashring library https://github.com/serialx/hashring . 
+* Consistent hashing
 
-# Using
+Implementations is heavily inspired (almost translation though refactored now) on golang hashring library https://github.com/serialx/hashring .
+
+* Rendezvous hashing (aka Highest Random Weight or HRW hashing)
+
+Based on python algorithm described here: https://en.wikipedia.org/wiki/Rendezvous_hashing directly implementing idea presented and proved here: http://www.snia.org/sites/default/files/SDC15_presentations/dist_sys/Jason_Resch_New_Consistent_Hashings_Rev.pdf
+
+# Basic usage
 
 //TODO
-
-# Motivation
-
-The main goal for this project was to have such minimal no-deps library to calculate distributed hashes. For now it supports only what original library had - consistent hashing, but there are plans to add rendez-vous (aka HRW) hashing implementation in the future with some common interface.
 
 # Licensing
 
