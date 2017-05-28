@@ -33,7 +33,7 @@ import java.util.Set;
  * Implementation is based and compatible with serialx/hashring project: {@url https://github.com/serialx/hashring}
  *
  */
-public class HashRing<N> implements DistributedHash<N> {
+public class HashRing<N> implements StableHash<N> {
 
     private final Map<HashKey,N> ring;
     private final List<HashKey> sortedKeys;

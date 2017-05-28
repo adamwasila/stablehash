@@ -20,33 +20,33 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public interface DistributedHash<N> {
+public interface StableHash<N> {
 
     Optional<N> getNode(String stringKey);
 
     Set<N> getNodes(String stringKey, int size);
 
-    DistributedHash addNode(N nodeName);
+    StableHash addNode(N nodeName);
 
-    DistributedHash addWeightedNode(N nodeName, int weight);
+    StableHash addWeightedNode(N nodeName, int weight);
 
-    DistributedHash updateWeightedNode(N nodeName, int weight);
+    StableHash updateWeightedNode(N nodeName, int weight);
 
-    DistributedHash removeNode(N nodeName);
+    StableHash removeNode(N nodeName);
 
-    static <N> DistributedHash newConsistentHash(Collection<N> nodes) {
+    static <N> StableHash newConsistentHash(Collection<N> nodes) {
         return new HashRing<N>(nodes);
     }
 
-    static <N> DistributedHash newConsistentHash(Map<N,Integer> weightedNodes) {
+    static <N> StableHash newConsistentHash(Map<N,Integer> weightedNodes) {
         return new HashRing<N>(weightedNodes);
     }
 
-    static <N> DistributedHash newRendezvousHash(Collection<N> nodes) {
+    static <N> StableHash newRendezvousHash(Collection<N> nodes) {
         return new RendezvousHash<N>(nodes);
     }
 
-    static <N> DistributedHash newRendezvousHash(Map<N,Integer> weightedNodes) {
+    static <N> StableHash newRendezvousHash(Map<N,Integer> weightedNodes) {
         return new RendezvousHash<>(weightedNodes);
     }
 

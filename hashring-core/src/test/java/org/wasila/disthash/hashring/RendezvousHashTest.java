@@ -21,10 +21,11 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class RendezvousHashTest {
 
-    DistributedHash<String> hashRing;
+    StableHash<String> hashRing;
 
     @Test
     public void testSingleNodeABC() {
@@ -111,7 +112,7 @@ public class RendezvousHashTest {
     @Test
     public void expectNodeRangesABC() {
         List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
-        hashRing = DistributedHash.newRendezvousHash(nodes);
+        hashRing = StableHash.newRendezvousHash(nodes);
 
         expectNodes("test", new String[] {"b", "c"});
         expectNodes("test1", new String[] {"b", "c"});

@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  *
  * @param <N> Node type
  */
-public class RendezvousHash<N> implements DistributedHash<N> {
+public class RendezvousHash<N> implements StableHash<N> {
 
     private HashUtil hashUtil;
 

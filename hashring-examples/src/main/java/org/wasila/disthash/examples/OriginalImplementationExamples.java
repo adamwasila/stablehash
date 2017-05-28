@@ -15,7 +15,7 @@
  */
 package org.wasila.disthash.examples;
 
-import org.wasila.disthash.hashring.DistributedHash;
+import org.wasila.disthash.hashring.StableHash;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class OriginalImplementationExamples {
         memcacheServers.add("192.168.0.247:11212");
         memcacheServers.add("192.168.0.249:11212");
 
-        DistributedHash<String> hring = DistributedHash.newConsistentHash(memcacheServers);
+        StableHash<String> hring = StableHash.newConsistentHash(memcacheServers);
 
         String node = hring.getNode("my_key").get();
 
@@ -55,7 +55,7 @@ public class OriginalImplementationExamples {
 
         int replicaCount = 3;
 
-        DistributedHash<String> ring = DistributedHash.newConsistentHash(Arrays.asList(serversInRing));
+        StableHash<String> ring = StableHash.newConsistentHash(Arrays.asList(serversInRing));
 
         Set<String> server = ring.getNodes("my_key", replicaCount);
         System.out.println("Selected nodes: " + server);
@@ -67,7 +67,7 @@ public class OriginalImplementationExamples {
         weights.put("192.168.0.247:11212", 2);
         weights.put("192.168.0.249:11212", 1);
 
-        DistributedHash<String> hring = DistributedHash.newConsistentHash(weights);
+        StableHash<String> hring = StableHash.newConsistentHash(weights);
 
         String node = hring.getNode("my_key").get();
 
@@ -80,7 +80,7 @@ public class OriginalImplementationExamples {
         memcacheServers.add("192.168.0.247:11212");
         memcacheServers.add("192.168.0.249:11212");
 
-        DistributedHash<String> hring = DistributedHash.newConsistentHash(memcacheServers);
+        StableHash<String> hring = StableHash.newConsistentHash(memcacheServers);
 
         hring = hring.removeNode("192.168.0.246:11212");
         hring = hring.addNode("192.168.0.250:11212");
