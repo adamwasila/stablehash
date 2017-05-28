@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wasila.disthash.examples;
+package org.wasila.stablehash.disthash.examples;
 
-import org.wasila.disthash.hashring.StableHash;
+import org.wasila.stablehash.StableHash;
 
 import java.util.ArrayList;
 import java.util.Arrays;

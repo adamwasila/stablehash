@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wasila.disthash.hashring;
+package org.wasila.stablehash;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.wasila.stablehash.StableHash;
 
 import java.util.Arrays;
 import java.util.HashMap;
