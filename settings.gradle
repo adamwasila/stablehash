@@ -1,3 +1,5 @@
 rootProject.name = 'stablehash'
 
 include ':stablehash-core'
+
+include ':stablehash-examples'
