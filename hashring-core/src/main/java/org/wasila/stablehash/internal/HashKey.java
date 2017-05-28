@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wasila.stablehash;
+package org.wasila.stablehash.internal;
 
 /**
  * The {@code HashKey} class holds hash value of given key. As md5 algorithm is used to generate key

@@ -15,6 +15,9 @@
  */
 package org.wasila.stablehash;
 
+import org.wasila.stablehash.internal.ConsistentHash;
+import org.wasila.stablehash.internal.RendezvousHash;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;

@@ -17,6 +17,7 @@ package org.wasila.stablehash;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.wasila.stablehash.internal.RendezvousHash;
 
 import java.util.Arrays;
 import java.util.List;

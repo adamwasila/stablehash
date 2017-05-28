@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wasila.stablehash;
+package org.wasila.stablehash.internal;
 
-class Pair<F, L> {
-    private final F first;
-    private final L last;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
-    public Pair(F first, L last) {
-        this.first = first;
-        this.last = last;
+class HashUtil {
+
+    HashKey genKey(String key) {
+        byte[] bKey = hashDigest(key);
+        return HashKey.hashVal(bKey);
     }
 
-    public F getFirst() {
-        return first;
+    byte[] hashDigest(String key) {
+        try {
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            return md5.digest(key.getBytes());
+        } catch (NoSuchAlgorithmException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
-    public L getLast() {
-        return last;
-    }
 }
