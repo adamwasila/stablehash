@@ -211,8 +211,7 @@ public class ConsistentHash<N> implements StableHash<N> {
         newWeights.put(nodeName, weight);
         newNodes.add(nodeName);
 
-        ConsistentHash<N> newhash = new ConsistentHash<N>(newNodes, newWeights);
-        return newhash;
+        return new ConsistentHash<N>(newNodes, newWeights);
     }
 
     /**

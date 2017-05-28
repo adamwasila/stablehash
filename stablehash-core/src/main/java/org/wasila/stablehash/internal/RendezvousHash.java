@@ -78,8 +78,7 @@ public class RendezvousHash<N> implements StableHash<N> {
             sortedSet.add(new Pair<>(entry.getKey(), getWeightedScore(stringKey, entry.getKey(), entry.getValue())));
         }
 
-        Set<N> resultSet = sortedSet.stream().limit(size).map(pair -> pair.getFirst()).collect(Collectors.toSet());
-        return resultSet;
+        return sortedSet.stream().limit(size).map(pair -> pair.getFirst()).collect(Collectors.toSet());
     }
 
     @Override
