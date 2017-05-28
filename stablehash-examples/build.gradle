@@ -5,7 +5,7 @@ repositories {
 }
 
 dependencies {
-    compile project(':hashring-core')
+    compile project(':stablehash-core')
 
     testCompile 'junit:junit:4.12'
 }
