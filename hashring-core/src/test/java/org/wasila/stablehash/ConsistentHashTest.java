@@ -17,7 +17,6 @@ package org.wasila.stablehash;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.wasila.stablehash.StableHash;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,14 +28,14 @@ import java.util.Map;
  * Used for conformance check - in case of nonconformant behaviour (eg. stricter validation rules)
  * failing test cases will be commented out, left for further inspection.
  */
-public class HashRingTest {
+public class ConsistentHashTest {
 
-    StableHash<String> hashRing;
+    StableHash<String> hash;
 
     @Test
     public void expectNodeRangesABC() {
         List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
-        hashRing = StableHash.newConsistentHash(nodes);
+        hash = StableHash.newConsistentHash(nodes);
 
         expectNodes("test", new String[] {"a", "b"});
         expectNodes("test", new String[] {"a", "b"});
@@ -52,8 +51,8 @@ public class HashRingTest {
     @Test
     public void expectNodeRangesABCD() {
         List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
-        hashRing = StableHash.newConsistentHash(nodes);
-        hashRing = hashRing.addNode("d");
+        hash = StableHash.newConsistentHash(nodes);
+        hash = hash.addNode("d");
 
         expectNode("test", "a");
         expectNode("test", "a");
@@ -65,7 +64,7 @@ public class HashRingTest {
         expectNode("aaaa", "b");
         expectNode("bbbb", "a");
 
-        hashRing = hashRing.addNode("e");
+        hash = hash.addNode("e");
 
         expectNode("test", "a");
         expectNode("test", "a");
@@ -79,7 +78,7 @@ public class HashRingTest {
 
         expectNodes("test", new String[] {"a", "b"});
 
-        hashRing = hashRing.addNode("f");
+        hash = hash.addNode("f");
 
         expectNode("test", "a");
         expectNode("test", "a");
@@ -97,7 +96,7 @@ public class HashRingTest {
     @Test
     public void testDuplicateNodes() {
         List<String> nodes = Arrays.asList(new String[] {"a", "a", "a", "a", "b"});
-        hashRing = StableHash.newConsistentHash(nodes);
+        hash = StableHash.newConsistentHash(nodes);
 
         expectNode("test", "a");
         expectNode("test", "a");
@@ -113,11 +112,11 @@ public class HashRingTest {
     @Test
     public void testAddWeightedNode() {
         List<String> nodes = Arrays.asList(new String[] {"a", "c"});
-        hashRing = StableHash.newConsistentHash(nodes);
+        hash = StableHash.newConsistentHash(nodes);
         // illegal now
-        // hashRing = hashRing.addWeightedNode("b", 0);
-        hashRing = hashRing.addWeightedNode("b", 2);
-        hashRing = hashRing.addWeightedNode("b", 2);
+        // hash = hash.addWeightedNode("b", 0);
+        hash = hash.addWeightedNode("b", 2);
+        hash = hash.addWeightedNode("b", 2);
 
         expectNode("test", "b");
         expectNode("test", "b");
@@ -135,13 +134,13 @@ public class HashRingTest {
     @Test
     public void TestUpdateWeightedNode() {
         List<String> nodes = Arrays.asList(new String[] {"a", "c"});
-        hashRing = StableHash.newConsistentHash(nodes);
-        hashRing = hashRing.addWeightedNode("b", 1);
-        hashRing = hashRing.updateWeightedNode("b", 2);
-        hashRing = hashRing.updateWeightedNode("b", 2);
+        hash = StableHash.newConsistentHash(nodes);
+        hash = hash.addWeightedNode("b", 1);
+        hash = hash.updateWeightedNode("b", 2);
+        hash = hash.updateWeightedNode("b", 2);
         // illegal now
-        // hashRing = hashRing.updateWeightedNode("b", 0);
-        hashRing = hashRing.updateWeightedNode("d", 2);
+        // hash = hash.updateWeightedNode("b", 0);
+        hash = hash.updateWeightedNode("d", 2);
 
         expectNode("test", "b");
         expectNode("test", "b");
@@ -159,12 +158,12 @@ public class HashRingTest {
     @Test
     public void TestRemoveAddNode() {
         List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
-        hashRing = StableHash.newConsistentHash(nodes);
+        hash = StableHash.newConsistentHash(nodes);
 
         expectNodesABC();
         expectNodeRangesABC();
 
-        hashRing = hashRing.removeNode("b");
+        hash = hash.removeNode("b");
 
         expectNode("test", "a");
         expectNode("test", "a");
@@ -186,7 +185,7 @@ public class HashRingTest {
         expectNodes("aaaa", "a", "c");
         expectNodes("bbbb", "a", "c");
 
-        hashRing = hashRing.addNode("b");
+        hash = hash.addNode("b");
 
         expectNodesABC();
         expectNodeRangesABC();
@@ -199,7 +198,7 @@ public class HashRingTest {
         weights.put("b", 2);
         weights.put("c", 1);
 
-        hashRing = StableHash.newConsistentHash(weights);
+        hash = StableHash.newConsistentHash(weights);
 
         expectNode("test", "b");
         expectNode("test", "b");
@@ -221,7 +220,7 @@ public class HashRingTest {
         expectNodes("aaaa", "b", "a");
         expectNodes("bbbb", "a", "b");
 
-        hashRing = hashRing.removeNode("c");
+        hash = hash.removeNode("c");
 
         expectNode("test", "b");
         expectNode("test", "b");
@@ -247,8 +246,8 @@ public class HashRingTest {
     @Test
     public void TestAddRemoveNode() {
         List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
-        hashRing = StableHash.newConsistentHash(nodes);
-        hashRing = hashRing.addNode("d");
+        hash = StableHash.newConsistentHash(nodes);
+        hash = hash.addNode("d");
 
         // Somehow adding d does not load balance these keys...
         expectNodesABCD();
@@ -262,7 +261,7 @@ public class HashRingTest {
         expectNodes("aaaa", "b", "a");
         expectNodes("bbbb", "a", "b");
 
-        hashRing = hashRing.addNode("e");
+        hash = hash.addNode("e");
 
         expectNode("test", "a");
         expectNode("test", "a");
@@ -284,7 +283,7 @@ public class HashRingTest {
         expectNodes("aaaa", "b", "e");
         expectNodes("bbbb", "e", "a");
 
-        hashRing = hashRing.addNode("f");
+        hash = hash.addNode("f");
 
         expectNode("test", "a");
         expectNode("test", "a");
@@ -306,7 +305,7 @@ public class HashRingTest {
         expectNodes("aaaa", "b", "e");
         expectNodes("bbbb", "e", "f");
 
-        hashRing = hashRing.removeNode("e");
+        hash = hash.removeNode("e");
 
         expectNode("test", "a");
         expectNode("test", "a");
@@ -328,7 +327,7 @@ public class HashRingTest {
         expectNodes("aaaa", "b", "a");
         expectNodes("bbbb", "f", "a");
 
-        hashRing = hashRing.removeNode("f");
+        hash = hash.removeNode("f");
 
         expectNodesABCD();
 
@@ -342,19 +341,19 @@ public class HashRingTest {
         expectNodes("aaaa", "b", "a");
         expectNodes("bbbb", "a", "b");
 
-        hashRing = hashRing.removeNode("d");
+        hash = hash.removeNode("d");
 
         expectNodesABC();
         expectNodeRangesABC();
     }
 
     private void expectNode(String key, String expectedNode) {
-        String node = hashRing.getNode(key).get();
+        String node = hash.getNode(key).get();
         Assert.assertEquals(expectedNode, node);
     }
 
     private void expectNodes(String key, String... expectedNodes) {
-        String[] nodes = hashRing.getNodes(key, expectedNodes.length).toArray(new String[0]);
+        String[] nodes = hash.getNodes(key, expectedNodes.length).toArray(new String[0]);
         Assert.assertArrayEquals(expectedNodes, nodes);
     }
 

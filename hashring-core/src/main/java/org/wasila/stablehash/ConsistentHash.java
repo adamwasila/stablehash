@@ -28,12 +28,12 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * The {@code HashRing} class implements consistent hashing algorithm.
+ * The {@code ConsistentHash} class implements consistent hashing algorithm.
  *
  * Implementation is based and compatible with serialx/hashring project: {@url https://github.com/serialx/hashring}
  *
  */
-public class HashRing<N> implements StableHash<N> {
+public class ConsistentHash<N> implements StableHash<N> {
 
     private final Map<HashKey,N> ring;
     private final List<HashKey> sortedKeys;
@@ -42,7 +42,7 @@ public class HashRing<N> implements StableHash<N> {
 
     private final HashUtil hashUtil;
 
-    private HashRing() {
+    private ConsistentHash() {
         hashUtil = new HashUtil();
         ring = new HashMap<>();
         sortedKeys = new ArrayList<>();
@@ -55,7 +55,7 @@ public class HashRing<N> implements StableHash<N> {
      *
      * @param nodes Collection of nodes
      */
-    public HashRing(Collection<N> nodes) {
+    public ConsistentHash(Collection<N> nodes) {
         this();
         this.nodes.addAll(nodes);
         generateCircle();
@@ -66,14 +66,14 @@ public class HashRing<N> implements StableHash<N> {
      *
      * @param weights map where nodes are assigned to keys and weights to the corresponding values.
      */
-    public HashRing(Map<N,Integer> weights) {
+    public ConsistentHash(Map<N,Integer> weights) {
         this();
         this.nodes.addAll(weights.keySet());
         this.weights.putAll(weights);
         generateCircle();
     }
 
-    private HashRing(List<N> nodes, Map<N,Integer> weights) {
+    private ConsistentHash(List<N> nodes, Map<N,Integer> weights) {
         this();
         this.nodes.addAll(nodes);
         this.weights.putAll(weights);
@@ -81,15 +81,15 @@ public class HashRing<N> implements StableHash<N> {
     }
 
     /**
-     * Returns new instance of {@code HashRing} with weights updated to the new values.
+     * Returns new instance of {@code ConsistentHash} with weights updated to the new values.
      *
      * @param newWeights Weights of nodes to be updated. All missing values means that weight
      *                   should be copied to the new instance unchanged.
-     * @return           New {@code HashRing} instance
+     * @return           New {@code ConsistentHash} instance
      */
     @Deprecated
-    public HashRing updateWeights(Map<N,Integer> newWeights) {
-        HashRing hring = this;
+    public ConsistentHash updateWeights(Map<N,Integer> newWeights) {
+        ConsistentHash hring = this;
         boolean nodesChgFlg;
 
         if (newWeights.size() != weights.size()) {
@@ -104,7 +104,7 @@ public class HashRing<N> implements StableHash<N> {
         }
 
         if (nodesChgFlg) {
-            hring = new HashRing<N>(newWeights);
+            hring = new ConsistentHash<N>(newWeights);
         }
 
         return hring;
@@ -169,29 +169,29 @@ public class HashRing<N> implements StableHash<N> {
     }
 
     /**
-     * Returns new instance of {@code HashRing} updated with new node. Node has weight 1 assigned
+     * Returns new instance of {@code ConsistentHash} updated with new node. Node has weight 1 assigned
      * by default so it is equivalent to call addWeightedNode(nodeName, 1) directly
      *
      * @param nodeName   Name of node to be added
-     * @return           New {@code HashRing} instance
+     * @return           New {@code ConsistentHash} instance
      * @throws NullPointerException     if {@code nodeName} is null
      */
     @Override
-    public HashRing addNode(N nodeName) {
+    public ConsistentHash addNode(N nodeName) {
         return addWeightedNode(nodeName, 1);
     }
 
     /**
-     * Returns new instance of {@code HashRing} updated with new node of given weight.
+     * Returns new instance of {@code ConsistentHash} updated with new node of given weight.
      *
      * @param nodeName   Name of node to be added
      * @param weight     Weight of node
-     * @return           New {@code HashRing} instance
+     * @return           New {@code ConsistentHash} instance
      * @throws NullPointerException     if {@code nodeName} is null
      * @throws IllegalArgumentException if weight is 0 or less
      */
     @Override
-    public HashRing addWeightedNode(N nodeName, int weight) {
+    public ConsistentHash addWeightedNode(N nodeName, int weight) {
         if (nodeName == null) {
             throw new NullPointerException("nodeName must not be null");
         }
@@ -209,21 +209,21 @@ public class HashRing<N> implements StableHash<N> {
         newWeights.put(nodeName, weight);
         newNodes.add(nodeName);
 
-        HashRing newhash = new HashRing(newNodes, newWeights);
+        ConsistentHash newhash = new ConsistentHash(newNodes, newWeights);
         return newhash;
     }
 
     /**
-     * Returns new instance of {@code HashRing} updated with node and new weight of that node.
+     * Returns new instance of {@code ConsistentHash} updated with node and new weight of that node.
      *
      * @param nodeName   Name of node
      * @param weight     Weight of node
-     * @return           New {@code HashRing} instance
+     * @return           New {@code ConsistentHash} instance
      * @throws NullPointerException     if {@code nodeName} is null
      * @throws IllegalArgumentException if weight is 0 or less
      */
     @Override
-    public HashRing updateWeightedNode(N nodeName, int weight) {
+    public ConsistentHash updateWeightedNode(N nodeName, int weight) {
         if (nodeName == null) {
             throw new NullPointerException("nodeName must not be null");
         }
@@ -239,19 +239,19 @@ public class HashRing<N> implements StableHash<N> {
 
         newWeights.put(nodeName, weight);
 
-        HashRing newhash = new HashRing(nodes, newWeights);
+        ConsistentHash newhash = new ConsistentHash(nodes, newWeights);
         return newhash;
     }
 
     /**
-     * Returns new instance of {@code HashRing} with given node removed.
+     * Returns new instance of {@code ConsistentHash} with given node removed.
      *
      * @param nodeName  Name of node
-     * @return          New {@code HashRing} instance
+     * @return          New {@code ConsistentHash} instance
      * @throws NullPointerException     if {@code nodeName} is null
      */
     @Override
-    public HashRing removeNode(N nodeName) {
+    public ConsistentHash removeNode(N nodeName) {
         if (nodeName == null) {
             throw new NullPointerException("nodeName must not be null");
         }
@@ -266,9 +266,7 @@ public class HashRing<N> implements StableHash<N> {
         Map<N,Integer> newWeights = new HashMap<>(weights);
         newWeights.remove(nodeName);
 
-        HashRing newHashRing = new HashRing(newNodes, newWeights);
-
-        return newHashRing;
+        return new ConsistentHash(newNodes, newWeights);
     }
 
     private void generateCircle() {

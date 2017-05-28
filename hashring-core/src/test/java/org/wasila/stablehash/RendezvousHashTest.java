@@ -24,12 +24,12 @@ import java.util.Optional;
 
 public class RendezvousHashTest {
 
-    StableHash<String> hashRing;
+    StableHash<String> hash;
 
     @Test
     public void testSingleNodeABC() {
         List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
-        hashRing = new RendezvousHash<>(nodes);
+        hash = new RendezvousHash<>(nodes);
 
         expectNode("test", "b");
         expectNode("test1", "b");
@@ -45,8 +45,8 @@ public class RendezvousHashTest {
     @Test
     public void testAddNode() {
         List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
-        hashRing = new RendezvousHash<>(nodes);
-        hashRing = hashRing.addNode("d");
+        hash = new RendezvousHash<>(nodes);
+        hash = hash.addNode("d");
 
         expectNode("test", "b");
         expectNode("test1", "d"); // *
@@ -57,7 +57,7 @@ public class RendezvousHashTest {
         expectNode("aaaa", "d"); // *
         expectNode("bbbb", "d"); // *
 
-        hashRing = hashRing.removeNode("d");
+        hash = hash.removeNode("d");
 
         expectNode("test", "b");
         expectNode("test1", "b");
@@ -73,7 +73,7 @@ public class RendezvousHashTest {
     @Test
     public void testRemoveNode() {
         List<String> nodes = Arrays.asList(new String[] {"a", "b", "c", "d"});
-        hashRing = new RendezvousHash<>(nodes);
+        hash = new RendezvousHash<>(nodes);
 
         expectNode("test", "b");
         expectNode("test1", "d");
@@ -84,7 +84,7 @@ public class RendezvousHashTest {
         expectNode("aaaa", "d");
         expectNode("bbbb", "d");
 
-        hashRing = hashRing.removeNode("a");
+        hash = hash.removeNode("a");
 
         expectNode("test", "b");
         expectNode("test1", "d");
@@ -93,14 +93,14 @@ public class RendezvousHashTest {
         expectNode("aaaa", "d");
         expectNode("bbbb", "d");
 
-        hashRing = hashRing.removeNode("c");
+        hash = hash.removeNode("c");
 
         expectNode("test", "b");
         expectNode("test1", "d");
         expectNode("aaaa", "d");
         expectNode("bbbb", "d");
 
-        hashRing = hashRing.removeNode("b");
+        hash = hash.removeNode("b");
 
         expectNode("test1", "d");
         expectNode("aaaa", "d");
@@ -111,7 +111,7 @@ public class RendezvousHashTest {
     @Test
     public void expectNodeRangesABC() {
         List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
-        hashRing = StableHash.newRendezvousHash(nodes);
+        hash = StableHash.newRendezvousHash(nodes);
 
         expectNodes("test", new String[] {"b", "c"});
         expectNodes("test1", new String[] {"b", "c"});
@@ -124,12 +124,12 @@ public class RendezvousHashTest {
     }
 
     private void expectNode(String key, String expectedNode) {
-        Optional<String> node = hashRing.getNode(key);
+        Optional<String> node = hash.getNode(key);
         Assert.assertEquals(expectedNode, node.get());
     }
 
     private void expectNodes(String key, String... expectedNodes) {
-        String[] nodes = hashRing.getNodes(key, expectedNodes.length).toArray(new String[0]);
+        String[] nodes = hash.getNodes(key, expectedNodes.length).toArray(new String[0]);
         Assert.assertArrayEquals(expectedNodes, nodes);
     }
 

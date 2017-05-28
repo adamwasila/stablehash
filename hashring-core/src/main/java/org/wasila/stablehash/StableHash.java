@@ -35,11 +35,11 @@ public interface StableHash<N> {
     StableHash removeNode(N nodeName);
 
     static <N> StableHash newConsistentHash(Collection<N> nodes) {
-        return new HashRing<N>(nodes);
+        return new ConsistentHash<N>(nodes);
     }
 
     static <N> StableHash newConsistentHash(Map<N,Integer> weightedNodes) {
-        return new HashRing<N>(weightedNodes);
+        return new ConsistentHash<N>(weightedNodes);
     }
 
     static <N> StableHash newRendezvousHash(Collection<N> nodes) {
