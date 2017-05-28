@@ -179,7 +179,7 @@ public class ConsistentHash<N> implements StableHash<N> {
      * @throws NullPointerException     if {@code nodeName} is null
      */
     @Override
-    public ConsistentHash addNode(N nodeName) {
+    public ConsistentHash<N> addNode(N nodeName) {
         return addWeightedNode(nodeName, 1);
     }
 
@@ -193,7 +193,7 @@ public class ConsistentHash<N> implements StableHash<N> {
      * @throws IllegalArgumentException if weight is 0 or less
      */
     @Override
-    public ConsistentHash addWeightedNode(N nodeName, int weight) {
+    public ConsistentHash<N> addWeightedNode(N nodeName, int weight) {
         if (nodeName == null) {
             throw new NullPointerException("nodeName must not be null");
         }
@@ -211,7 +211,7 @@ public class ConsistentHash<N> implements StableHash<N> {
         newWeights.put(nodeName, weight);
         newNodes.add(nodeName);
 
-        ConsistentHash newhash = new ConsistentHash(newNodes, newWeights);
+        ConsistentHash<N> newhash = new ConsistentHash<N>(newNodes, newWeights);
         return newhash;
     }
 
@@ -225,7 +225,7 @@ public class ConsistentHash<N> implements StableHash<N> {
      * @throws IllegalArgumentException if weight is 0 or less
      */
     @Override
-    public ConsistentHash updateWeightedNode(N nodeName, int weight) {
+    public ConsistentHash<N> updateWeightedNode(N nodeName, int weight) {
         if (nodeName == null) {
             throw new NullPointerException("nodeName must not be null");
         }
@@ -241,7 +241,7 @@ public class ConsistentHash<N> implements StableHash<N> {
 
         newWeights.put(nodeName, weight);
 
-        ConsistentHash newhash = new ConsistentHash(nodes, newWeights);
+        ConsistentHash<N> newhash = new ConsistentHash<N>(nodes, newWeights);
         return newhash;
     }
 
@@ -253,7 +253,7 @@ public class ConsistentHash<N> implements StableHash<N> {
      * @throws NullPointerException     if {@code nodeName} is null
      */
     @Override
-    public ConsistentHash removeNode(N nodeName) {
+    public ConsistentHash<N> removeNode(N nodeName) {
         if (nodeName == null) {
             throw new NullPointerException("nodeName must not be null");
         }
@@ -268,7 +268,7 @@ public class ConsistentHash<N> implements StableHash<N> {
         Map<N,Integer> newWeights = new HashMap<>(weights);
         newWeights.remove(nodeName);
 
-        return new ConsistentHash(newNodes, newWeights);
+        return new ConsistentHash<N>(newNodes, newWeights);
     }
 
     private void generateCircle() {

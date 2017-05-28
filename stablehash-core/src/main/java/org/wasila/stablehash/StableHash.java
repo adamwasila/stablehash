@@ -29,27 +29,27 @@ public interface StableHash<N> {
 
     Set<N> getNodes(String stringKey, int size);
 
-    StableHash addNode(N nodeName);
+    StableHash<N> addNode(N nodeName);
 
-    StableHash addWeightedNode(N nodeName, int weight);
+    StableHash<N> addWeightedNode(N nodeName, int weight);
 
-    StableHash updateWeightedNode(N nodeName, int weight);
+    StableHash<N> updateWeightedNode(N nodeName, int weight);
 
-    StableHash removeNode(N nodeName);
+    StableHash<N> removeNode(N nodeName);
 
-    static <N> StableHash newConsistentHash(Collection<N> nodes) {
+    static <N> StableHash<N> newConsistentHash(Collection<N> nodes) {
         return new ConsistentHash<N>(nodes);
     }
 
-    static <N> StableHash newConsistentHash(Map<N,Integer> weightedNodes) {
+    static <N> StableHash<N> newConsistentHash(Map<N,Integer> weightedNodes) {
         return new ConsistentHash<N>(weightedNodes);
     }
 
-    static <N> StableHash newRendezvousHash(Collection<N> nodes) {
+    static <N> StableHash<N> newRendezvousHash(Collection<N> nodes) {
         return new RendezvousHash<N>(nodes);
     }
 
-    static <N> StableHash newRendezvousHash(Map<N,Integer> weightedNodes) {
+    static <N> StableHash<N> newRendezvousHash(Map<N,Integer> weightedNodes) {
         return new RendezvousHash<>(weightedNodes);
     }
 
