@@ -37,11 +37,13 @@ import java.util.stream.Collectors;
  */
 public class RendezvousHash<N> implements StableHash<N> {
 
-    private HashUtil hashUtil;
+    private InputValidator<N> validator;
 
+    private HashUtil hashUtil;
     private final Map<N, Integer> nodes;
 
     public RendezvousHash() {
+        validator = new InputValidator<N>();
         hashUtil = new HashUtil();
         nodes = new HashMap<>();
     }
@@ -58,6 +60,7 @@ public class RendezvousHash<N> implements StableHash<N> {
 
     @Override
     public Optional<N> getNode(String stringKey) {
+        validator.validateGetNode(stringKey);
         double highestScore = -1;
         N champion = null;
         for (Map.Entry<N, Integer> entry : nodes.entrySet()) {
@@ -72,6 +75,8 @@ public class RendezvousHash<N> implements StableHash<N> {
 
     @Override
     public Set<N> getNodes(String stringKey, int size) {
+        validator.validateGetNodes(stringKey, size, nodes.size());
+
         Set<Pair<N, Double>> sortedSet = new TreeSet<>(Collections.reverseOrder(Comparator.comparingDouble(Pair::getLast)));
 
         for (Map.Entry<N, Integer> entry : nodes.entrySet()) {
@@ -83,17 +88,13 @@ public class RendezvousHash<N> implements StableHash<N> {
 
     @Override
     public RendezvousHash<N> addNode(N nodeName) {
+        validator.validateAddNode(nodeName);
         return addWeightedNode(nodeName, 1);
     }
 
     @Override
     public RendezvousHash<N> addWeightedNode(N nodeName, int weight) {
-        if (nodeName == null) {
-            throw new NullPointerException("nodeName must not be null");
-        }
-        if (weight <= 0) {
-            throw new IllegalArgumentException("Invalid weight value: " + weight);
-        }
+        validator.validateAddWeightedNode(nodeName, weight);
 
         Integer oldWeight = nodes.get(nodeName);
         if (oldWeight != null && oldWeight == 1) {
@@ -106,11 +107,13 @@ public class RendezvousHash<N> implements StableHash<N> {
 
     @Override
     public RendezvousHash<N> updateWeightedNode(N nodeName, int weight) {
+        validator.validateUpdateWeightedNode(nodeName, weight);
         return addWeightedNode(nodeName, weight);
     }
 
     @Override
     public RendezvousHash<N> removeNode(N nodeName) {
+        validator.validateRemoveNode(nodeName);
         if (!nodes.containsKey(nodeName)) {
             return this;
         }
