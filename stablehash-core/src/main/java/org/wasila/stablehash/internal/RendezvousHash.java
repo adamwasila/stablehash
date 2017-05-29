@@ -59,12 +59,12 @@ public class RendezvousHash<N> implements StableHash<N> {
     }
 
     @Override
-    public Optional<N> getNode(String stringKey) {
-        validator.validateGetNode(stringKey);
+    public Optional<N> getNode(String key) {
+        validator.validateGetNode(key);
         double highestScore = -1;
         N champion = null;
         for (Map.Entry<N, Integer> entry : nodes.entrySet()) {
-            double newScore = getWeightedScore(stringKey, entry.getKey(), entry.getValue());
+            double newScore = getWeightedScore(key, entry.getKey(), entry.getValue());
             if (newScore > highestScore) {
                 champion = entry.getKey();
                 highestScore = newScore;
@@ -74,52 +74,52 @@ public class RendezvousHash<N> implements StableHash<N> {
     }
 
     @Override
-    public Set<N> getNodes(String stringKey, int size) {
-        validator.validateGetNodes(stringKey, size, nodes.size());
+    public Set<N> getNodes(String key, int size) {
+        validator.validateGetNodes(key, size, nodes.size());
 
         Set<Pair<N, Double>> sortedSet = new TreeSet<>(Collections.reverseOrder(Comparator.comparingDouble(Pair::getLast)));
 
         for (Map.Entry<N, Integer> entry : nodes.entrySet()) {
-            sortedSet.add(new Pair<>(entry.getKey(), getWeightedScore(stringKey, entry.getKey(), entry.getValue())));
+            sortedSet.add(new Pair<>(entry.getKey(), getWeightedScore(key, entry.getKey(), entry.getValue())));
         }
 
         return sortedSet.stream().limit(size).map(pair -> pair.getFirst()).collect(Collectors.toSet());
     }
 
     @Override
-    public RendezvousHash<N> addNode(N nodeName) {
-        validator.validateAddNode(nodeName);
-        return addWeightedNode(nodeName, 1);
+    public RendezvousHash<N> addNode(N node) {
+        validator.validateAddNode(node);
+        return addWeightedNode(node, 1);
     }
 
     @Override
-    public RendezvousHash<N> addWeightedNode(N nodeName, int weight) {
-        validator.validateAddWeightedNode(nodeName, weight);
+    public RendezvousHash<N> addWeightedNode(N node, int weight) {
+        validator.validateAddWeightedNode(node, weight);
 
-        Integer oldWeight = nodes.get(nodeName);
+        Integer oldWeight = nodes.get(node);
         if (oldWeight != null && oldWeight == 1) {
             return this;
         }
         Map<N, Integer> newNodes = new HashMap<>(nodes);
-        newNodes.put(nodeName, 1);
+        newNodes.put(node, 1);
         return new RendezvousHash<>(newNodes);
     }
 
     @Override
-    public RendezvousHash<N> updateWeightedNode(N nodeName, int weight) {
-        validator.validateUpdateWeightedNode(nodeName, weight);
-        return addWeightedNode(nodeName, weight);
+    public RendezvousHash<N> updateWeightedNode(N node, int weight) {
+        validator.validateUpdateWeightedNode(node, weight);
+        return addWeightedNode(node, weight);
     }
 
     @Override
-    public RendezvousHash<N> removeNode(N nodeName) {
-        validator.validateRemoveNode(nodeName);
-        if (!nodes.containsKey(nodeName)) {
+    public RendezvousHash<N> removeNode(N node) {
+        validator.validateRemoveNode(node);
+        if (!nodes.containsKey(node)) {
             return this;
         }
         Map<N, Integer> newNodes = new HashMap<>();
         newNodes.putAll(nodes);
-        newNodes.remove(nodeName);
+        newNodes.remove(node);
         return new RendezvousHash<>(newNodes);
     }
 

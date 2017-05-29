@@ -118,31 +118,31 @@ public class ConsistentHash<N> implements StableHash<N> {
     /**
      * Returns node for given key.
      *
-     * @param stringKey Any string value
+     * @param key Any string value
      * @return          Node assigned to the key given as an argument
      * @throws NullPointerException     if key value is null
      */
     @Override
-    public Optional<N> getNode(String stringKey) {
-        validator.validateGetNode(stringKey);
-        Optional<Integer> nodePosition = getNodePos(stringKey);
+    public Optional<N> getNode(String key) {
+        validator.validateGetNode(key);
+        Optional<Integer> nodePosition = getNodePos(key);
         return nodePosition.map((position) -> ring.get(sortedKeys.get(position)));
     }
 
     /**
      * Returns array of nodes for given key.
      *
-     * @param stringKey Any string value
+     * @param key Any string value
      * @param size      Specifies how many nodes are expected to be returned
      * @return          Nodes assigned to the key given as an argument
      * @throws NullPointerException     if key value is null
      * @throws IllegalArgumentException if size is 0 or less or greater than total number of nodes
      */
     @Override
-    public Set<N> getNodes(String stringKey, int size) {
-        validator.validateGetNodes(stringKey, size, nodes.size());
+    public Set<N> getNodes(String key, int size) {
+        validator.validateGetNodes(key, size, nodes.size());
 
-        Optional<Integer> pos = getNodePos(stringKey);
+        Optional<Integer> pos = getNodePos(key);
         if (!pos.isPresent()) {
             return Collections.emptySet();
         }
@@ -150,8 +150,8 @@ public class ConsistentHash<N> implements StableHash<N> {
         Set<N> returnedValues = new HashSet<>();
         Set<N> resultSlice = new LinkedHashSet<>();
         for (int i = pos.get(); i < pos.get() + sortedKeys.size(); i++) {
-            HashKey key = sortedKeys.get(i % sortedKeys.size());
-            N val = ring.get(key);
+            HashKey hashKey = sortedKeys.get(i % sortedKeys.size());
+            N val = ring.get(hashKey);
 
             if (!returnedValues.contains(val)) {
                 returnedValues.add(val);
@@ -171,40 +171,40 @@ public class ConsistentHash<N> implements StableHash<N> {
 
     /**
      * Returns new instance of {@code ConsistentHash} updated with new node. Node has weight 1 assigned
-     * by default so it is equivalent to call addWeightedNode(nodeName, 1) directly
+     * by default so it is equivalent to call addWeightedNode(node, 1) directly
      *
-     * @param nodeName   Name of node to be added
+     * @param node   Name of node to be added
      * @return           New {@code ConsistentHash} instance
-     * @throws NullPointerException     if {@code nodeName} is null
+     * @throws NullPointerException     if {@code node} is null
      */
     @Override
-    public ConsistentHash<N> addNode(N nodeName) {
-        validator.validateAddNode(nodeName);
-        return addWeightedNode(nodeName, 1);
+    public ConsistentHash<N> addNode(N node) {
+        validator.validateAddNode(node);
+        return addWeightedNode(node, 1);
     }
 
     /**
      * Returns new instance of {@code ConsistentHash} updated with new node of given weight.
      *
-     * @param nodeName   Name of node to be added
+     * @param node   Name of node to be added
      * @param weight     Weight of node
      * @return           New {@code ConsistentHash} instance
-     * @throws NullPointerException     if {@code nodeName} is null
+     * @throws NullPointerException     if {@code node} is null
      * @throws IllegalArgumentException if weight is 0 or less
      */
     @Override
-    public ConsistentHash<N> addWeightedNode(N nodeName, int weight) {
-        validator.validateAddWeightedNode(nodeName, weight);
+    public ConsistentHash<N> addWeightedNode(N node, int weight) {
+        validator.validateAddWeightedNode(node, weight);
 
-        if (nodes.contains(nodeName)) {
+        if (nodes.contains(node)) {
             return this;
         }
 
         Map<N,Integer> newWeights = new HashMap<>(this.weights);
         List<N> newNodes = new ArrayList<>(this.nodes);
 
-        newWeights.put(nodeName, weight);
-        newNodes.add(nodeName);
+        newWeights.put(node, weight);
+        newNodes.add(node);
 
         return new ConsistentHash<N>(newNodes, newWeights);
     }
@@ -212,23 +212,23 @@ public class ConsistentHash<N> implements StableHash<N> {
     /**
      * Returns new instance of {@code ConsistentHash} updated with node and new weight of that node.
      *
-     * @param nodeName   Name of node
+     * @param node   Name of node
      * @param weight     Weight of node
      * @return           New {@code ConsistentHash} instance
-     * @throws NullPointerException     if {@code nodeName} is null
+     * @throws NullPointerException     if {@code node} is null
      * @throws IllegalArgumentException if weight is 0 or less
      */
     @Override
-    public ConsistentHash<N> updateWeightedNode(N nodeName, int weight) {
-        validator.validateUpdateWeightedNode(nodeName, weight);
+    public ConsistentHash<N> updateWeightedNode(N node, int weight) {
+        validator.validateUpdateWeightedNode(node, weight);
 
-        if (weights.get(nodeName) != null && weights.get(nodeName) == weight) {
+        if (weights.get(node) != null && weights.get(node) == weight) {
             return this;
         }
 
         Map<N,Integer> newWeights = new HashMap<>(this.weights);
 
-        newWeights.put(nodeName, weight);
+        newWeights.put(node, weight);
 
         ConsistentHash<N> newhash = new ConsistentHash<N>(nodes, newWeights);
         return newhash;
@@ -237,23 +237,23 @@ public class ConsistentHash<N> implements StableHash<N> {
     /**
      * Returns new instance of {@code ConsistentHash} with given node removed.
      *
-     * @param nodeName  Name of node
+     * @param node  Name of node
      * @return          New {@code ConsistentHash} instance
-     * @throws NullPointerException     if {@code nodeName} is null
+     * @throws NullPointerException     if {@code node} is null
      */
     @Override
-    public ConsistentHash<N> removeNode(N nodeName) {
-        validator.validateRemoveNode(nodeName);
+    public ConsistentHash<N> removeNode(N node) {
+        validator.validateRemoveNode(node);
 
         List<N> newNodes = new ArrayList<>(nodes);
-        newNodes.remove(nodeName);
+        newNodes.remove(node);
 
         if (nodes.size() == newNodes.size()) {
             return this;
         }
 
         Map<N,Integer> newWeights = new HashMap<>(weights);
-        newWeights.remove(nodeName);
+        newWeights.remove(node);
 
         return new ConsistentHash<N>(newNodes, newWeights);
     }
@@ -280,17 +280,17 @@ public class ConsistentHash<N> implements StableHash<N> {
         Collections.sort(sortedKeys);
     }
 
-    private Optional<Integer> getNodePos(String stringKey) {
-        if (stringKey == null) {
+    private Optional<Integer> getNodePos(String key) {
+        if (key == null) {
             throw new NullPointerException("specified key must not be null");
         }
         if (ring.isEmpty()) {
             return Optional.empty();
         }
 
-        HashKey key = hashUtil.genKey(stringKey);
+        HashKey hashKey = hashUtil.genKey(key);
 
-        int pos = Collections.binarySearch(sortedKeys, key);
+        int pos = Collections.binarySearch(sortedKeys, hashKey);
         pos = (pos>=0) ? pos : -(pos+1);
         pos = pos % sortedKeys.size();
 

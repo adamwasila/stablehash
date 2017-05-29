@@ -20,16 +20,16 @@ import java.util.Set;
 
 public interface StableHash<N> {
 
-    Optional<N> getNode(String stringKey);
+    Optional<N> getNode(String key);
 
-    Set<N> getNodes(String stringKey, int size);
+    Set<N> getNodes(String key, int size);
 
-    StableHash<N> addNode(N nodeName);
+    StableHash<N> addNode(N node);
 
-    StableHash<N> addWeightedNode(N nodeName, int weight);
+    StableHash<N> addWeightedNode(N node, int weight);
 
-    StableHash<N> updateWeightedNode(N nodeName, int weight);
+    StableHash<N> updateWeightedNode(N node, int weight);
 
-    StableHash<N> removeNode(N nodeName);
+    StableHash<N> removeNode(N node);
 
 }
