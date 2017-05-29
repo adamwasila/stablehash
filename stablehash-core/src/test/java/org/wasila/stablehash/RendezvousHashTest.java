@@ -108,7 +108,7 @@ public class RendezvousHashTest extends TestBase {
     @Test
     public void expectNodeRangesABC() {
         List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
-        hash = StableHash.newRendezvousHash(nodes);
+        hash = StableHashStaticFactory.newRendezvousHash(nodes);
 
         expectNodes("test", new String[] {"b", "c"});
         expectNodes("test1", new String[] {"b", "c"});

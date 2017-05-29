@@ -32,7 +32,7 @@ public class ConsistentHashTest extends TestBase {
     @Test
     public void expectNodeRangesABC() {
         List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
-        hash = StableHash.newConsistentHash(nodes);
+        hash = StableHashStaticFactory.newConsistentHash(nodes);
 
         expectNodes("test", new String[] {"a", "b"});
         expectNodes("test", new String[] {"a", "b"});
@@ -48,7 +48,7 @@ public class ConsistentHashTest extends TestBase {
     @Test
     public void expectNodeRangesABCD() {
         List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
-        hash = StableHash.newConsistentHash(nodes);
+        hash = StableHashStaticFactory.newConsistentHash(nodes);
         hash = hash.addNode("d");
 
         expectNode("test", "a");
@@ -93,7 +93,7 @@ public class ConsistentHashTest extends TestBase {
     @Test
     public void testDuplicateNodes() {
         List<String> nodes = Arrays.asList(new String[] {"a", "a", "a", "a", "b"});
-        hash = StableHash.newConsistentHash(nodes);
+        hash = StableHashStaticFactory.newConsistentHash(nodes);
 
         expectNode("test", "a");
         expectNode("test", "a");
@@ -109,7 +109,7 @@ public class ConsistentHashTest extends TestBase {
     @Test
     public void testAddWeightedNode() {
         List<String> nodes = Arrays.asList(new String[] {"a", "c"});
-        hash = StableHash.newConsistentHash(nodes);
+        hash = StableHashStaticFactory.newConsistentHash(nodes);
         // illegal now
         // hash = hash.addWeightedNode("b", 0);
         hash = hash.addWeightedNode("b", 2);
@@ -131,7 +131,7 @@ public class ConsistentHashTest extends TestBase {
     @Test
     public void TestUpdateWeightedNode() {
         List<String> nodes = Arrays.asList(new String[] {"a", "c"});
-        hash = StableHash.newConsistentHash(nodes);
+        hash = StableHashStaticFactory.newConsistentHash(nodes);
         hash = hash.addWeightedNode("b", 1);
         hash = hash.updateWeightedNode("b", 2);
         hash = hash.updateWeightedNode("b", 2);
@@ -155,7 +155,7 @@ public class ConsistentHashTest extends TestBase {
     @Test
     public void TestRemoveAddNode() {
         List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
-        hash = StableHash.newConsistentHash(nodes);
+        hash = StableHashStaticFactory.newConsistentHash(nodes);
 
         expectNodesABC();
         expectNodeRangesABC();
@@ -195,7 +195,7 @@ public class ConsistentHashTest extends TestBase {
         weights.put("b", 2);
         weights.put("c", 1);
 
-        hash = StableHash.newConsistentHash(weights);
+        hash = StableHashStaticFactory.newConsistentHash(weights);
 
         expectNode("test", "b");
         expectNode("test", "b");
@@ -243,7 +243,7 @@ public class ConsistentHashTest extends TestBase {
     @Test
     public void TestAddRemoveNode() {
         List<String> nodes = Arrays.asList(new String[] {"a", "b", "c"});
-        hash = StableHash.newConsistentHash(nodes);
+        hash = StableHashStaticFactory.newConsistentHash(nodes);
         hash = hash.addNode("d");
 
         // Somehow adding d does not load balance these keys...
