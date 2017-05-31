@@ -115,13 +115,6 @@ public class ConsistentHash<N> implements StableHash<N> {
         return hring;
     }
 
-    /**
-     * Returns node for given key.
-     *
-     * @param key Any string value
-     * @return          Node assigned to the key given as an argument
-     * @throws NullPointerException     if key value is null
-     */
     @Override
     public Optional<N> getNode(String key) {
         validator.validateGetNode(key);
@@ -129,15 +122,6 @@ public class ConsistentHash<N> implements StableHash<N> {
         return nodePosition.map((position) -> ring.get(sortedKeys.get(position)));
     }
 
-    /**
-     * Returns array of nodes for given key.
-     *
-     * @param key Any string value
-     * @param size      Specifies how many nodes are expected to be returned
-     * @return          Nodes assigned to the key given as an argument
-     * @throws NullPointerException     if key value is null
-     * @throws IllegalArgumentException if size is 0 or less or greater than total number of nodes
-     */
     @Override
     public Set<N> getNodes(String key, int size) {
         validator.validateGetNodes(key, size, nodes.size());
@@ -169,29 +153,12 @@ public class ConsistentHash<N> implements StableHash<N> {
         }
     }
 
-    /**
-     * Returns new instance of {@code ConsistentHash} updated with new node. Node has weight 1 assigned
-     * by default so it is equivalent to call addWeightedNode(node, 1) directly
-     *
-     * @param node   Name of node to be added
-     * @return           New {@code ConsistentHash} instance
-     * @throws NullPointerException     if {@code node} is null
-     */
     @Override
     public ConsistentHash<N> addNode(N node) {
         validator.validateAddNode(node);
         return addWeightedNode(node, 1);
     }
 
-    /**
-     * Returns new instance of {@code ConsistentHash} updated with new node of given weight.
-     *
-     * @param node   Name of node to be added
-     * @param weight     Weight of node
-     * @return           New {@code ConsistentHash} instance
-     * @throws NullPointerException     if {@code node} is null
-     * @throws IllegalArgumentException if weight is 0 or less
-     */
     @Override
     public ConsistentHash<N> addWeightedNode(N node, int weight) {
         validator.validateAddWeightedNode(node, weight);
@@ -209,15 +176,6 @@ public class ConsistentHash<N> implements StableHash<N> {
         return new ConsistentHash<N>(newNodes, newWeights);
     }
 
-    /**
-     * Returns new instance of {@code ConsistentHash} updated with node and new weight of that node.
-     *
-     * @param node   Name of node
-     * @param weight     Weight of node
-     * @return           New {@code ConsistentHash} instance
-     * @throws NullPointerException     if {@code node} is null
-     * @throws IllegalArgumentException if weight is 0 or less
-     */
     @Override
     public ConsistentHash<N> updateWeightedNode(N node, int weight) {
         validator.validateUpdateWeightedNode(node, weight);
@@ -234,13 +192,6 @@ public class ConsistentHash<N> implements StableHash<N> {
         return newhash;
     }
 
-    /**
-     * Returns new instance of {@code ConsistentHash} with given node removed.
-     *
-     * @param node  Name of node
-     * @return          New {@code ConsistentHash} instance
-     * @throws NullPointerException     if {@code node} is null
-     */
     @Override
     public ConsistentHash<N> removeNode(N node) {
         validator.validateRemoveNode(node);
