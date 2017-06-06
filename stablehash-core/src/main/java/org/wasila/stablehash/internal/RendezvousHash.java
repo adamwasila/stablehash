@@ -124,7 +124,7 @@ public class RendezvousHash<N> implements StableHash<N> {
     }
 
     private double getWeightedScore(String keyString, N node, int weight) {
-        HashKey key = hashUtil.genKey(node.toString() + keyString);
+        HashKey key = hashUtil.iterator(node.toString() + keyString).next();
         double score = 1.0 / -Math.log(key.toDouble());
         return weight * score;
     }

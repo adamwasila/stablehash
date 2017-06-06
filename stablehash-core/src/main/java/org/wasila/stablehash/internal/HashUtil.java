@@ -17,15 +17,34 @@ package org.wasila.stablehash.internal;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Iterator;
 
 class HashUtil {
 
-    HashKey genKey(String key) {
+    Iterator<HashKey> iterator(final String key) {
+        return new Iterator<HashKey>() {
+            private byte[] hash = hashDigest(key);
+            private int idx = 0;
+
+            @Override
+            public boolean hasNext() {
+                return idx+4 <= hash.length;
+            }
+
+            @Override
+            public HashKey next() {
+                idx += 4;
+                return HashKey.hashVal(hash, idx-4);
+            }
+        };
+    }
+
+    private HashKey genKey(String key) {
         byte[] bKey = hashDigest(key);
         return HashKey.hashVal(bKey);
     }
 
-    byte[] hashDigest(String key) {
+    private byte[] hashDigest(String key) {
         try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             return md5.digest(key.getBytes());

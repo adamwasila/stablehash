@@ -40,12 +40,15 @@ class HashKey implements Comparable<HashKey> {
      * @throws ArrayIndexOutOfBoundsException If provided array has less than 4 elements
      */
     public static HashKey hashVal(byte[] keyBytes) {
-        return new HashKey((Byte.toUnsignedLong(keyBytes[3]) << 24L) |
-                ((Byte.toUnsignedLong(keyBytes[2])) << 16L) |
-                ((Byte.toUnsignedLong(keyBytes[1])) << 8L) |
-                (Byte.toUnsignedLong(keyBytes[0])));
+        return hashVal(keyBytes, 0);
     }
 
+    public static HashKey hashVal(byte[] keyBytes, int offset) {
+        return new HashKey((Byte.toUnsignedLong(keyBytes[3+offset]) << 24L) |
+                ((Byte.toUnsignedLong(keyBytes[2+offset])) << 16L) |
+                ((Byte.toUnsignedLong(keyBytes[1+offset])) << 8L) |
+                (Byte.toUnsignedLong(keyBytes[offset])));
+    }
 
     public double toDouble() {
         return (this.hashKey & fto) / ftz;

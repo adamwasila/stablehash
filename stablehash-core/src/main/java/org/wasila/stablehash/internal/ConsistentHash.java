@@ -18,11 +18,11 @@ package org.wasila.stablehash.internal;
 import org.wasila.stablehash.StableHash;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -220,9 +220,13 @@ public class ConsistentHash<N> implements StableHash<N> {
 
             for (int j=0; j<factor; j++) {
                 String nodeKey = node.toString() + "-" + j;
-                byte[] bKey = hashUtil.hashDigest(nodeKey);
-                for (int i=0; i<3; i++) {
-                    HashKey key = HashKey.hashVal(Arrays.copyOfRange(bKey, i*4, i*4+4));
+
+                Iterator<HashKey> it = hashUtil.iterator(nodeKey);
+                int i =0;
+
+                // bizzarly, original implementation took only 3 of 4 possible hash keys (md5 has 16 bytes)
+                while (it.hasNext() && (i++ < 3)) {
+                    HashKey key = it.next();
                     ring.put(key, node);
                     sortedKeys.add(key);
                 }
@@ -239,7 +243,7 @@ public class ConsistentHash<N> implements StableHash<N> {
             return Optional.empty();
         }
 
-        HashKey hashKey = hashUtil.genKey(key);
+        HashKey hashKey = hashUtil.iterator(key).next();
 
         int pos = Collections.binarySearch(sortedKeys, hashKey);
         pos = (pos>=0) ? pos : -(pos+1);
