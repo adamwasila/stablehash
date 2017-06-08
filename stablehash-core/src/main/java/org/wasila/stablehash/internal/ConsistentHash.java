@@ -15,6 +15,8 @@
  */
 package org.wasila.stablehash.internal;
 
+import org.wasila.stablehash.AuxHashKey;
+import org.wasila.stablehash.HashFactory;
 import org.wasila.stablehash.StableHash;
 
 import java.util.ArrayList;
@@ -39,16 +41,15 @@ public class ConsistentHash<N> implements StableHash<N> {
 
     private InputValidator<N> validator;
 
-    private final Map<HashKey,N> ring;
-    private final List<HashKey> sortedKeys;
+    private final HashFactory hashFactory;
+    private final Map<AuxHashKey,N> ring;
+    private final List<AuxHashKey> sortedKeys;
     private final List<N> nodes;
     private final Map<N,Integer> weights;
 
-    private final HashUtil hashUtil;
-
-    private ConsistentHash() {
+    private ConsistentHash(HashFactory hashFactory) {
+        this.hashFactory = hashFactory;
         validator = new InputValidator<>();
-        hashUtil = new HashUtil();
         ring = new HashMap<>();
         sortedKeys = new ArrayList<>();
         nodes = new ArrayList<>();
@@ -57,11 +58,32 @@ public class ConsistentHash<N> implements StableHash<N> {
 
     /**
      * Constructs instance with given nodes list. All nodes have default weight of 1.
+     * Uses default auxiliary hash which is currently MD5 based hash.
      *
      * @param nodes Collection of nodes
      */
     public ConsistentHash(Collection<N> nodes) {
-        this();
+        this(new HashUtil(), nodes);
+    }
+
+    /**
+     * Constructs instance with given nodes list. All nodes can have arbitrary weight assigned to it.
+     * Uses default auxiliary hash which is currently MD5 based hash.
+     *
+     * @param weights map where nodes are assigned to keys and weights to the corresponding values.
+     */
+    public ConsistentHash(Map<N,Integer> weights) {
+        this(new HashUtil(), weights);
+    }
+
+    /**
+     * Constructs instance with given nodes list. All nodes have default weight of 1.
+     *
+     * @param hashFactory Factory of auxiliary hashes
+     * @param nodes Collection of nodes
+     */
+    public ConsistentHash(HashFactory hashFactory, Collection<N> nodes) {
+        this(hashFactory);
         this.nodes.addAll(nodes);
         generateCircle();
     }
@@ -69,17 +91,18 @@ public class ConsistentHash<N> implements StableHash<N> {
     /**
      * Constructs instance with given nodes list. All nodes can have arbitrary weight assigned to it.
      *
+     * @param hashFactory Factory of auxiliary hashes
      * @param weights map where nodes are assigned to keys and weights to the corresponding values.
      */
-    public ConsistentHash(Map<N,Integer> weights) {
-        this();
+    public ConsistentHash(HashFactory hashFactory, Map<N,Integer> weights) {
+        this(hashFactory);
         this.nodes.addAll(weights.keySet());
         this.weights.putAll(weights);
         generateCircle();
     }
 
-    private ConsistentHash(List<N> nodes, Map<N,Integer> weights) {
-        this();
+    private ConsistentHash(HashFactory hashFactory, List<N> nodes, Map<N,Integer> weights) {
+        this(hashFactory);
         this.nodes.addAll(nodes);
         this.weights.putAll(weights);
         generateCircle();
@@ -109,7 +132,7 @@ public class ConsistentHash<N> implements StableHash<N> {
         }
 
         if (nodesChgFlg) {
-            hring = new ConsistentHash<N>(newWeights);
+            hring = new ConsistentHash<N>(this.hashFactory, newWeights);
         }
 
         return hring;
@@ -134,7 +157,7 @@ public class ConsistentHash<N> implements StableHash<N> {
         Set<N> returnedValues = new HashSet<>();
         Set<N> resultSlice = new LinkedHashSet<>();
         for (int i = pos.get(); i < pos.get() + sortedKeys.size(); i++) {
-            HashKey hashKey = sortedKeys.get(i % sortedKeys.size());
+            AuxHashKey hashKey = sortedKeys.get(i % sortedKeys.size());
             N val = ring.get(hashKey);
 
             if (!returnedValues.contains(val)) {
@@ -173,7 +196,7 @@ public class ConsistentHash<N> implements StableHash<N> {
         newWeights.put(node, weight);
         newNodes.add(node);
 
-        return new ConsistentHash<N>(newNodes, newWeights);
+        return new ConsistentHash<N>(this.hashFactory, newNodes, newWeights);
     }
 
     @Override
@@ -188,7 +211,7 @@ public class ConsistentHash<N> implements StableHash<N> {
 
         newWeights.put(node, weight);
 
-        ConsistentHash<N> newhash = new ConsistentHash<N>(nodes, newWeights);
+        ConsistentHash<N> newhash = new ConsistentHash<N>(this.hashFactory, nodes, newWeights);
         return newhash;
     }
 
@@ -206,7 +229,7 @@ public class ConsistentHash<N> implements StableHash<N> {
         Map<N,Integer> newWeights = new HashMap<>(weights);
         newWeights.remove(node);
 
-        return new ConsistentHash<N>(newNodes, newWeights);
+        return new ConsistentHash<N>(this.hashFactory, newNodes, newWeights);
     }
 
     private void generateCircle() {
@@ -221,12 +244,12 @@ public class ConsistentHash<N> implements StableHash<N> {
             for (int j=0; j<factor; j++) {
                 String nodeKey = node.toString() + "-" + j;
 
-                Iterator<HashKey> it = hashUtil.iterator(nodeKey);
+                Iterator<AuxHashKey> it = hashFactory.iterator(nodeKey);
                 int i =0;
 
                 // bizzarly, original implementation took only 3 of 4 possible hash keys (md5 has 16 bytes)
                 while (it.hasNext() && (i++ < 3)) {
-                    HashKey key = it.next();
+                    AuxHashKey key = it.next();
                     ring.put(key, node);
                     sortedKeys.add(key);
                 }
@@ -243,7 +266,7 @@ public class ConsistentHash<N> implements StableHash<N> {
             return Optional.empty();
         }
 
-        HashKey hashKey = hashUtil.iterator(key).next();
+        AuxHashKey hashKey = hashFactory.iterator(key).next();
 
         int pos = Collections.binarySearch(sortedKeys, hashKey);
         pos = (pos>=0) ? pos : -(pos+1);

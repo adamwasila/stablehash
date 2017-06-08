@@ -15,18 +15,17 @@
  */
 package org.wasila.stablehash.internal;
 
+import org.wasila.stablehash.AuxHashKey;
+
 /**
  * The {@code HashKey} class holds hash value of given key. As md5 algorithm is used to generate key
  * only four bytes are taken into account to calculate the hash value.
  *
  * This class is used only internally meaning it is not part of the API.
  */
-class HashKey implements Comparable<HashKey> {
+class HashKey implements AuxHashKey {
 
-    private final long fto = (0xFFFFFFFFFFFFFFFFL >> (64 - 53));
-    private final double ftz = (double)(1L << 53);
-
-    final long hashKey;
+    private final long hashKey;
 
     private HashKey(long hashKey) {
         this.hashKey = hashKey;
@@ -50,13 +49,14 @@ class HashKey implements Comparable<HashKey> {
                 (Byte.toUnsignedLong(keyBytes[offset])));
     }
 
-    public double toDouble() {
-        return (this.hashKey & fto) / ftz;
+    @Override
+    public long getHash() {
+        return hashKey;
     }
 
     @Override
-    public int compareTo(HashKey comparedKey) {
-        return Long.compare(hashKey, comparedKey.hashKey);
+    public int compareTo(AuxHashKey comparedKey) {
+        return Long.compare(this.getHash(), comparedKey.getHash());
     }
 
     @Override
@@ -78,4 +78,5 @@ class HashKey implements Comparable<HashKey> {
     public String toString() {
         return "HashKey{" + hashKey + '}';
     }
+
 }

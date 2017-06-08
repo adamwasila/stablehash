@@ -15,14 +15,17 @@
  */
 package org.wasila.stablehash.internal;
 
+import org.wasila.stablehash.AuxHashKey;
+import org.wasila.stablehash.HashFactory;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 
-class HashUtil {
+class HashUtil implements HashFactory {
 
-    Iterator<HashKey> iterator(final String key) {
-        return new Iterator<HashKey>() {
+    public Iterator<AuxHashKey> iterator(String key) {
+        return new Iterator<AuxHashKey>() {
             private byte[] hash = hashDigest(key);
             private int idx = 0;
 

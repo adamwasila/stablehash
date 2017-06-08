@@ -15,6 +15,8 @@
  */
 package org.wasila.stablehash.internal;
 
+import org.wasila.stablehash.AuxHashKey;
+import org.wasila.stablehash.HashFactory;
 import org.wasila.stablehash.StableHash;
 
 import java.util.Collection;
@@ -37,24 +39,36 @@ import java.util.stream.Collectors;
  */
 public class RendezvousHash<N> implements StableHash<N> {
 
+    private final long fto = (0xFF_FF_FF_FF_FF_FF_FF_FFL >> (64 - 53));
+    private final double ftz = (double)(1L << 53);
+
+    private final HashFactory hashFactory;
+
     private InputValidator<N> validator;
 
-    private HashUtil hashUtil;
     private final Map<N, Integer> nodes;
 
-    public RendezvousHash() {
+    public RendezvousHash(HashFactory hashFactory) {
+        this.hashFactory = hashFactory;
         validator = new InputValidator<N>();
-        hashUtil = new HashUtil();
         nodes = new HashMap<>();
     }
 
     public RendezvousHash(Collection<N> nodesList) {
-        this();
-        nodes.putAll(nodesList.stream().collect(Collectors.toMap(node -> node, node -> 1)));
+        this(new HashUtil(), nodesList);
     }
 
     public RendezvousHash(Map<N, Integer> weightedNodesList) {
-        this();
+        this(new HashUtil(), weightedNodesList);
+    }
+
+    public RendezvousHash(HashFactory hashFactory, Collection<N> nodesList) {
+        this(hashFactory);
+        nodes.putAll(nodesList.stream().collect(Collectors.toMap(node -> node, node -> 1)));
+    }
+
+    public RendezvousHash(HashFactory hashFactory, Map<N, Integer> weightedNodesList) {
+        this(hashFactory);
         this.nodes.putAll(weightedNodesList);
     }
 
@@ -102,7 +116,7 @@ public class RendezvousHash<N> implements StableHash<N> {
         }
         Map<N, Integer> newNodes = new HashMap<>(nodes);
         newNodes.put(node, 1);
-        return new RendezvousHash<>(newNodes);
+        return new RendezvousHash<>(this.hashFactory, newNodes);
     }
 
     @Override
@@ -120,12 +134,16 @@ public class RendezvousHash<N> implements StableHash<N> {
         Map<N, Integer> newNodes = new HashMap<>();
         newNodes.putAll(nodes);
         newNodes.remove(node);
-        return new RendezvousHash<>(newNodes);
+        return new RendezvousHash<>(this.hashFactory, newNodes);
+    }
+
+    private double toDouble(long hash) {
+        return (hash & fto) / ftz;
     }
 
     private double getWeightedScore(String keyString, N node, int weight) {
-        HashKey key = hashUtil.iterator(node.toString() + keyString).next();
-        double score = 1.0 / -Math.log(key.toDouble());
+        AuxHashKey key = hashFactory.iterator(node.toString() + keyString).next();
+        double score = 1.0 / -Math.log(toDouble(key.getHash()));
         return weight * score;
     }
 
