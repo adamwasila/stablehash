@@ -39,11 +39,6 @@ class HashUtil {
         };
     }
 
-    private HashKey genKey(String key) {
-        byte[] bKey = hashDigest(key);
-        return HashKey.hashVal(bKey);
-    }
-
     private byte[] hashDigest(String key) {
         try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
