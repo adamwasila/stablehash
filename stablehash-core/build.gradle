@@ -1,9 +1,40 @@
-apply plugin: 'java'
+plugins {
+    id "java"
+    id "java-library"
+    id "maven-publish"
+    id "com.jfrog.bintray" version "1.7.3"
+}
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
     testCompile 'junit:junit:4.12'
+}
+
+publishing {
+    publications {
+        NatsAnnotatedPublication(MavenPublication) {
+            from components.java
+            groupId project.group
+            artifactId project.name
+            version project.version
+        }
+    }
+}
+
+bintray {
+    user = bintrayuser
+    key = bintraykey
+    println("USER: " + user)
+    println("KEY: ***") // + key)
+    publications = ['StablehashPublication']
+    pkg {
+        repo = project.ext.publicationRepoName
+        name = project.name
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/adamwasila/stablehash.git'
+    }
 }

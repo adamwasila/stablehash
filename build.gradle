@@ -1,8 +1,10 @@
 subprojects {
-  group 'org.wasila.stablehash'
-  version = "0.0.1-SNAPSHOT"
+    group 'org.wasila.stablehash'
+    version = "0.0.1-SNAPSHOT"
 
-//  sourceCompatibility = 1.8
+    project.ext {
+        publicationRepoName = "maven"
+    }
 }
 
 task wrapper(type: Wrapper) {
