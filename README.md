@@ -1,6 +1,6 @@
 # stablehash
-[![Build Status](https://travis-ci.org/adamwasila/hashring.svg?branch=master)](https://travis-ci.org/adamwasila/hashring)
-[![GitHub version](https://badge.fury.io/gh/adamwasila%2Fhashring.svg)](https://badge.fury.io/gh/adamwasila%2Fhashring)
+[![Build Status](https://travis-ci.org/adamwasila/hashring.svg?branch=master)](https://travis-ci.org/adamwasila/stablehash)
+[![GitHub version](https://badge.fury.io/gh/adamwasila%2Fstablehash.svg)](https://badge.fury.io/gh/adamwasila%2Fstablehash)
 [ ![Download](https://api.bintray.com/packages/adamwasila/maven/stablehash-core/images/download.svg) ](https://bintray.com/adamwasila/maven/stablehash-core/_latestVersion)
 
 Stable hashing implementation in java. Clean and simple (no runtime dependencies!).
