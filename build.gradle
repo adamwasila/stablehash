@@ -1,6 +1,6 @@
 subprojects {
     group 'org.wasila.stablehash'
-    version = "0.0.1"
+    version = "0.0.2-SNAPSHOT"
 
     project.ext {
         publicationRepoName = "maven"
