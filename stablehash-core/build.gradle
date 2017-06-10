@@ -16,7 +16,7 @@ dependencies {
 
 publishing {
     publications {
-        NatsAnnotatedPublication(MavenPublication) {
+        StablehashPublication(MavenPublication) {
             from components.java
             groupId project.group
             artifactId project.name
